@@ -7,10 +7,8 @@ local
 
 local_settings.py
 
-/admin/
-/css/
-/env/
-/fonts/
-/images/
-/js/
-/jspanel/
+env/
+django-app/uvcdat_live/exploratory_analysis/css/
+django-app/uvcdat_live/exploratory_analysis/img/
+django-app/uvcdat_live/exploratory_analysis/js/
+uvcdat_live.db
