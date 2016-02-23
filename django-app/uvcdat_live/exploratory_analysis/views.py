@@ -26,8 +26,6 @@ def ar(request):
     
   #data = open('/Users/8xo/esgfWorkspace/UVCDAT_live/WebContent/uvcdat_live/exploratory_analysis/static/exploratory_analysis/img/AR1.json')
   #jsonData = json.dumps(data)
-  
-  
     
   print request.GET.get('q')
   
