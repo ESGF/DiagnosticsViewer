@@ -7,8 +7,13 @@ local
 
 local_settings.py
 
-env/
+/env/
+uvcdat_live.db
+django-app/uvcdat_live/classic.db
 django-app/uvcdat_live/exploratory_analysis/css/
 django-app/uvcdat_live/exploratory_analysis/img/
 django-app/uvcdat_live/exploratory_analysis/js/
-uvcdat_live.db
+django-app/uvcdat_live/exploratory_analysis/cache/
+django-app/uvcdat_live/exploratory_analysis/heatmap_data/
+django-app/uvcdat_live/exploratory_analysis/json_grid_data/
+
