@@ -1,6 +1,16 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
+
+
+class UserKey(models.Model):
+    """
+    Used to sign API calls for a user.
+    """
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    key = models.CharField(max_length=128, unique=True)
+
 
 # group_name -> dataset_list
 # Example:
@@ -20,6 +30,7 @@ class Dataset_Access(models.Model):
 class Packages(models.Model):
     dataset_name = models.CharField(max_length=10000)
     packages = models.TextField(null=True)
+
     def __unicode__(self):
         return self.dataset_name + ' ' + str(self.packages)
 
@@ -30,6 +41,7 @@ class Packages(models.Model):
 class Published(models.Model):
     dataset_name = models.CharField(max_length=1000)
     published = models.TextField(null=True)
+
     def __unicode__(self):
         return self.dataset_name + ' ' + str(self.published)
 
@@ -40,6 +52,7 @@ class Published(models.Model):
 class Variables(models.Model):
     dataset_name = models.CharField(max_length=1000)
     variables = models.TextField(null=True)
+
     def __unicode__(self):
         return self.dataset_name + ' ' + str(self.variables)
 

@@ -1,4 +1,4 @@
-
+migrations/
 django-app/uvcdat_live/uvcdat_live/settings.py
 
 nohup.out
