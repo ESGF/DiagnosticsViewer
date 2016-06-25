@@ -2,10 +2,10 @@ from django.db import models
 
 # Create your models here.
 
-#group_name -> dataset_list
-#Example:
-#
-#
+# group_name -> dataset_list
+# Example:
+
+
 class Dataset_Access(models.Model):
     group_name = models.CharField(max_length=1000)
     dataset_list = models.TextField(null=True)
@@ -13,30 +13,30 @@ class Dataset_Access(models.Model):
     def __unicode__(self):
         return 'group_name: ' + self.group_name + ' datasets_list: ' + self.dataset_list
 
-#dataset_name -> packages
-#Example:
-#
-#
+# dataset_name -> packages
+# Example:
+
+
 class Packages(models.Model):
     dataset_name = models.CharField(max_length=10000)
     packages = models.TextField(null=True)
     def __unicode__(self):
         return self.dataset_name + ' ' + str(self.packages)
 
-#group_name -> published
-#Example:
-#
-#
+# group_name -> published
+# Example:
+
+
 class Published(models.Model):
     dataset_name = models.CharField(max_length=1000)
     published = models.TextField(null=True)
     def __unicode__(self):
         return self.dataset_name + ' ' + str(self.published)
 
-#dataset_name -> variables
-#Example:
-#
-#
+# dataset_name -> variables
+# Example:
+
+
 class Variables(models.Model):
     dataset_name = models.CharField(max_length=1000)
     variables = models.TextField(null=True)
@@ -45,7 +45,7 @@ class Variables(models.Model):
 
 
 
-#Sample shell program to work with the dbs
+# Sample shell program to work with the dbs
 '''
 In [1]: from exploratory_analysis.models import Dataset_Access
 
