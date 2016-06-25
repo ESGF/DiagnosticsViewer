@@ -9,7 +9,7 @@ def generate_token_url(filename):
     fp = open('eaconfig.cfg')
     config.readfp(fp)
 #    print 'PROTECTED FILENAME: ', filename
-    
+
     secret = config.get("options","secret_key")
 
     #print 'secret: ' + str(secret)
@@ -20,10 +20,10 @@ def generate_token_url(filename):
     #print type(secret)
     #print 'filename type: ', type(filename)
     fp.close()
-    
+
     ipLimitation = False                                    # Same as AuthTokenLimitByIp
-    hexTime = "{0:x}".format(int(time.time()))              # Time in Hexadecimal      
-    
+    hexTime = "{0:x}".format(int(time.time()))              # Time in Hexadecimal
+
     # Let's generate the token depending if we set AuthTokenLimitByIp
     if ipLimitation:
       token = hashlib.md5(''.join([secret, filename, hexTime, os.environ["REMOTE_ADDR"]])).hexdigest()
@@ -33,12 +33,12 @@ def generate_token_url(filename):
     '''
     if filename.find('set3_ANN_PRECT_LEGATES') != -1:
       print '\n\nfilename: ' + str(filename) + ' hexTime: ' + str(hexTime)
-      print '\n\nkey: ' + str(secret) + ' token: ' + str(token) 
+      print '\n\nkey: ' + str(secret) + ' token: ' + str(token)
     '''
-    
+
     # We build the url
     url = ''.join([protectedPath, token, "/", hexTime, filename])
-    return url 
+    return url
 
 
 #Belongs in a common utils package
@@ -47,13 +47,13 @@ def isLoggedIn(request,user_id):
     #print 'user: ' + str(request.user)
     #print 'user_id: ' + user_id
     loggedIn = False
-    
+
     if (str(request.user) == str(user_id)):
         loggedIn = True
-        
-    
+
+
     #take out when putting security back in
     loggedIn = True
-    
-    
+
+
     return loggedIn

@@ -79,7 +79,7 @@ EA_port = config.get("options", "port")
 
 # Main page.
 def index(request):
-    
+
     template = loader.get_template('exploratory_analysis/index.html')
 
     context = RequestContext(request, {
@@ -91,28 +91,28 @@ def index(request):
 
 #http://<host>/exploratory_analysis/login
 def login_page(request):
-    
+
     template = loader.get_template('exploratory_analysis/login.html')
 
     context = RequestContext(request, {
-        
+
     })
 
 
     return HttpResponse(template.render(context))
 
 def logout_page(request):
-    
-    
+
+
     print 'going to logout.html...'
-    
+
     from django.contrib.auth import logout
     logout(request)
-    
+
     template = loader.get_template('exploratory_analysis/logout.html')
 
     loggedIn = False
-    
+
     context = RequestContext(request, {
         'loggedIn' : str(loggedIn)
     })
@@ -122,54 +122,54 @@ def logout_page(request):
 #authentication based on the django user model
 #VERY SIMPLISTIC - user will have to user either the ACME username or register with a simple new account
 def auth_noesgf(request):
-    
+
     json_data = json.loads(request.body)
-        
+
     username = json_data['username']
     password = json_data['password']
-    
+
     user = authenticate(username=username,password=password)
-                
+
     print 'in auth_noesgf: ' + str(user)
     if user is not None:
         login(request,user)
         return HttpResponse('Authenticated')
-                    
-                    
-    else:  
+
+
+    else:
         return HttpResponse('Not Authenticated')
-    
-    
+
+
 def config(request):
-    
+
     sets = str(request.GET.get('set',None))
     dataset_name = str(request.GET.get('dataset_name',None))
-    
-    
+
+
     #print '\n\n\n\n\t\thostname: ' + str(EA_hostname)
-    
+
     config_params = dict( {'EA_hostname' : str(EA_hostname)} )
     #c_params['EA_hostname'] = str(EA_hostname)
     config_params['EA_port'] = str(EA_port)
-    
+
     data = config_params#{'config_params' : config_params}
     data_string = json.dumps(data,sort_keys=False,indent=2)#,indent=2)
-    
+
     #print 'packages data_string: ' + str(data_string)
     return HttpResponse(data_string + '\n')
 
 
 #Main view
 def main(request,user_id):
-  
+
     #check to see if the user is logged in
     loggedIn = isLoggedIn(request,user_id)
-    
+
     template = loader.get_template('exploratory_analysis/index.html')
-    
+
     if(loggedIn == False):
         template = loader.get_template('exploratory_analysis/not_logged_in.html')
-    
+
     context = RequestContext(request, {
         'username' : str(user_id),
         'loggedIn' : str(loggedIn)
@@ -186,13 +186,13 @@ def main(request,user_id):
 def classic(request,user_id):
 
     loggedIn = isLoggedIn(request,user_id)
-    
+
     template = loader.get_template('exploratory_analysis/classic.html')
-    
+
     if(loggedIn == False):
         template = loader.get_template('exploratory_analysis/not_logged_in.html')
-    
-    
+
+
     context = RequestContext(request, {
         'username' : str(user_id),
         'loggedIn' : str(loggedIn)
@@ -218,22 +218,22 @@ def classic_set_list_html(request):
     variables = json_data['variables']
     times = json_data['times']
     '''
-    
+
     if (package == 'atm' or package == 'amwg'):
         #print 'getting atm home'
         template = loader.get_template('exploratory_analysis/atm_home.html')
         context = RequestContext(request, {
-            
+
         })
         return HttpResponse(template.render(context))
     else:
         #print 'getting lnd home'
         template = loader.get_template('exploratory_analysis/land_home.html')
         context = RequestContext(request, {
-            
+
         })
         return HttpResponse(template.render(context))
-    
+
     #return HttpResponse(html);
 
 
@@ -241,52 +241,52 @@ def classic_views_html(request):
     """
     Generate new clasic view html
     The view shown depends on the package
-    """    
+    """
     sets = str(request.GET.get('set',None))
     dataset = str(request.GET.get('dataset_name',None))
     package = str(request.GET.get('package', None))
     if dataset == None or sets == None or package == None:
       print 'Sets or dataset not passed properly. We should never get here.'
       quit()
-    
+
     print 'Got %s - %s - %s' % (package, dataset, sets)
-    
+
     varlist = 'TLAI'
     times = 't1'
     options = []
-    
+
     #print 'IN CLASSIC_VIEWS_HTML - SET: ', sets
     html = ''
-    
+
     try:
         if package == 'lnd':
             html = lmwg.pageGenerator(sets, varlist, times, package, dataset, options)
         else:
             html = amwg.pageGenerator(sets, varlist, times, package, dataset, options)
-    
+
     except:
         tb = traceback.format_exc()
         #print 'tb: ' + tb
         return HttpResponse("error")
-        
+
 #    print 'returning html: ' + str(html)
-    
+
     return HttpResponse(html)
 
 
 
 def provenance(request):
-    
+
     filename = request.GET.get('filename', '')
     dataset_name = request.GET.get('dataset_name','')
     package = request.GET.get('package','')
-    
+
 #    print 'in provenance for filename ' + filename + ' and dataset_name ' + dataset_name + ' and package: ' + package
-    
+
 #    print 'getting config'
     path = config.get('paths', 'realPath')
 #    print 'Importing vcs'
-    
+
     import vcs
     fname = os.path.join(path, dataset_name, package, filename)
 #    print 'Looking for metadata in ', fname
@@ -304,8 +304,8 @@ def provenance(request):
       html += '</table>'
 
 #    print 'html: ', html
-    
-    
+
+
     return HttpResponse(html)
 
 
@@ -313,24 +313,24 @@ def provenance(request):
 #Example: curl -i -H "Accept: application/json" -X POST -d '{ "username" :  "u1" }'  http://localhost:8081/exploratory_analysis/auth/
 #@ensure_csrf_cookie
 def auth(request):
-    
-    
+
+
     if request.method == "POST":
-        
+
         json_data = json.loads(request.body)
-        
+
         username = json_data['username']
         password = json_data['password']
-        
+
         #return a None message if the username is blank
         if username == '':
             return HttpResponse("Not Authenticated")
         elif username == None:
             return HttpResponse("Not Authenticated")
-        
+
         #insert code for authentication here
         #create a valid user object
-        
+
         from fcntl import flock, LOCK_EX, LOCK_UN
         print '*****Begin ESGF Login*****'
         import traceback
@@ -342,26 +342,26 @@ def auth(request):
         if authReq == 'False':
             print 'Returning "authenticated"'
             return HttpResponse('Authenticated')
-         
+
         try:
-                
+
                 if not os.path.exists(outdir):
                     os.makedirs(outdir)
                 else:
                     print 'Did not make directory - path already exists'
-                
+
                 outfile = os.path.join(outdir, cert_name)
                 outfile = str(outfile)
-                
-                # outfile = '/tmp/x509up_u%s' % (os.getuid()) 
+
+                # outfile = '/tmp/x509up_u%s' % (os.getuid())
                 #print '----> OUTFILE: ', outfile
-                   
+
                 import myproxy_logon
-                
+
                 #username = username1
                 #password = password1
                 peernode = 'esg.ccs.ornl.gov'
-           
+
                 myproxy_logon.myproxy_logon(peernode,
                       username,
                       password,
@@ -369,40 +369,40 @@ def auth(request):
                       lifetime=43200,
                       port=7512
                       )
-            
-            
+
+
                 user = authenticate(username=username,password=password)
-                
-                
+
+
                 if user is not None:
                     login(request,user)
                     return HttpResponse('Authenticated')
-                    
-                    
+
+
                 else:
-                    
+
                     from django.contrib.auth.models import User
-                
+
                     user = User.objects.create_user(username, str(username + '@acme.com'), password)
                     user = authenticate(username=username,password=password)
-                    
+
                     #login to the app and return the string "Authenticated"
                     login(request,user)
-                
+
                     return HttpResponse('Authenticated')
-                
+
                 print '*****End ESGF login*****'
-                
+
         except:
                 tb = traceback.format_exc()
                 logger.debug('tb: ' + tb)
                 return HttpResponse("Not Authenticated")
-        
+
     else:
-        
+
         return HttpResponse("Not Authenticated")
-    
-    
+
+
     return HttpResponse("Hello")
 
 

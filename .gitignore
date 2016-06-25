@@ -46,4 +46,4 @@ local_settings.py
 /images/
 /js/
 /jspanel/
-
+*.db

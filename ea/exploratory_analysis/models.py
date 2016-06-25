@@ -9,7 +9,7 @@ from django.db import models
 class Dataset_Access(models.Model):
     group_name = models.CharField(max_length=1000)
     dataset_list = models.TextField(null=True)
-    
+
     def __unicode__(self):
         return 'group_name: ' + self.group_name + ' datasets_list: ' + self.dataset_list
 
@@ -22,11 +22,11 @@ class Packages(models.Model):
     packages = models.TextField(null=True)
     def __unicode__(self):
         return self.dataset_name + ' ' + str(self.packages)
- 
+
 #group_name -> published
 #Example:
 #
-#   
+#
 class Published(models.Model):
     dataset_name = models.CharField(max_length=1000)
     published = models.TextField(null=True)
@@ -42,9 +42,9 @@ class Variables(models.Model):
     variables = models.TextField(null=True)
     def __unicode__(self):
         return self.dataset_name + ' ' + str(self.variables)
-    
-    
-    
+
+
+
 #Sample shell program to work with the dbs
 '''
 In [1]: from exploratory_analysis.models import Dataset_Access
