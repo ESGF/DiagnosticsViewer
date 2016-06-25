@@ -5,74 +5,55 @@
 
 1. Install UVCDAT.
 
-
-Follow the instructions on uvcdat.llnl.gov.
-
-
-1. Source the uvcdat setup script.  (Assuming the binaries are in /usr/local/)
+```
+$ conda env create acme_viewer uvcdat -c uvcdat
+```
 
 
-source /usr/local/uvcdat/2.2.0/bin/setup_runtime.sh
+2. Load the conda environment
+
+```
+$ source activate acme_viewer
+```
 
 
+3. Clone the ACME Viewer git repository:
 
+```
+$ git clone https://github.com/ACME-OUI/acme-viewer
+```
 
-1. In a separate directory, install uvcmetrics.
+4. Change the following settings in the ea config file (acme-viewer/ea/eaconfig.cfg):
 
-
-mkdir -p <any directory prefix>/uvcmetrics
-git clone https://github.com/UV-CDAT/uvcmetrics.git
-cd uvcmetrics/uvcmetrics
-python setup.py install
-
-
-
-
-1. In a separate directory, clone the classic viewer git repository:
-
-
-mkdir -p <any directory prefix>/CV
-git clone https://github.com/jfharney/DiagnosticsViewer.git
-(use the devel-next-django-1.8 branch)
-
-
-1. Change the following settings in the ea config file here:
-
-
-<cloned path>/DiagnosticsViewer/django-app-1.8/ea/eaconfig.cfg
-
-
+```
 root -> (<cloned path>/DiagnosticsViewer/django-app-1.8/ea)
 hostname -> name of the host (if not testing on localhost)
 port -> name of the port that the application will run
+```
 
+5. Migrate the sqlite db.
 
-1. Migrate the sqlite db.
+```
+$ cd <cloned path>/acme-viewer/ea
+$ python manage.py migrate
+$ python manage.py makemigrations Dataset_Access
+$ python manage.py makemigrations Packages
+$ python manage.py makemigrations Published
+$ python manage.py makemigrations Variables
+```
 
+6. (Optional) Start the classic viewer using the django web server (for apache server setup see 7)
 
-cd <cloned path>/DiagnosticsViewer/django-app-1.8/ea/
-python manage.py migrate
-python manage.py makemigrations Dataset_Access
-python manage.py makemigrations Packages
-python manage.py makemigrations Published
-python manage.py makemigrations Variables
-
-
-
-
-1. (Optional) Start the classic viewer using the django web server (for apache server setup see 8)
+```
 python manage.py runserver <hostname>:<port>
+```
 
+7. (Optional) Start the classic viewer using the apache web server.  This deployment type requires settings to be changed in the httpd.conf file and requires apache 2 to be installed.
 
-1. (Optional) Start the classic viewer using the apache web server.  This deployment type requires settings to be changed in the httpd.conf file and requires apache 2 to be installed.
+Configuration tips:
 
-
-TBD
-
-
-
-
-
+* The user running UV-CDAT needs either a home directory or `$UVCDAT_DIR` to point to a .uvcdat folder (You can copy one from a real user to some location that the apache/whoever user can access, and chown it to the appropriate user).
+* Easiest setup is a standard mod_wsgi configuration of a django application.
 
 ________________
 
