@@ -1,0 +1,663 @@
+{
+  "url":"top level url",
+  "name":"lmwg",
+  "children":[
+    {
+      "name":"set1",
+      "children":[
+        {
+          "name":"TG",
+          "children":[
+            {
+              "url":"this is a leaf set1TGJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set1TGFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set1TGMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"TV",
+          "children":[
+            {
+              "url":"this is a leaf set1TVJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set1TVFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set1TVMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"PBOT",
+          "children":[
+            {
+              "url":"this is a leaf set1PBOTJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set1PBOTFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set1PBOTMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"BTRANS",
+          "children":[
+            {
+              "url":"this is a leaf set1BTRANSJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set1BTRANSFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set1BTRANSMAR",
+              "name":"MAR"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"set2",
+      "children":[
+        {
+          "name":"TG",
+          "children":[
+            {
+              "url":"this is a leaf set2TGJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set2TGFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set2TGMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"TV",
+          "children":[
+            {
+              "url":"this is a leaf set2TVJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set2TVFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set2TVMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"PBOT",
+          "children":[
+            {
+              "url":"this is a leaf set2PBOTJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set2PBOTFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set2PBOTMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"BTRANS",
+          "children":[
+            {
+              "url":"this is a leaf set2BTRANSJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set2BTRANSFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set2BTRANSMAR",
+              "name":"MAR"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"set3",
+      "children":[
+        {
+          "name":"TG",
+          "children":[
+            {
+              "url":"this is a leaf set3TGJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set3TGFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set3TGMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"TV",
+          "children":[
+            {
+              "url":"this is a leaf set3TVJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set3TVFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set3TVMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"PBOT",
+          "children":[
+            {
+              "url":"this is a leaf set3PBOTJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set3PBOTFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set3PBOTMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"BTRANS",
+          "children":[
+            {
+              "url":"this is a leaf set3BTRANSJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set3BTRANSFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set3BTRANSMAR",
+              "name":"MAR"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"set4",
+      "children":[
+        {
+          "name":"TG",
+          "children":[
+            {
+              "url":"this is a leaf set4TGJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set4TGFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set4TGMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"TV",
+          "children":[
+            {
+              "url":"this is a leaf set4TVJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set4TVFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set4TVMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"PBOT",
+          "children":[
+            {
+              "url":"this is a leaf set4PBOTJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set4PBOTFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set4PBOTMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"BTRANS",
+          "children":[
+            {
+              "url":"this is a leaf set4BTRANSJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set4BTRANSFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set4BTRANSMAR",
+              "name":"MAR"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"set5",
+      "children":[
+        {
+          "name":"TG",
+          "children":[
+            {
+              "url":"this is a leaf set5TGJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set5TGFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set5TGMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"TV",
+          "children":[
+            {
+              "url":"this is a leaf set5TVJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set5TVFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set5TVMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"PBOT",
+          "children":[
+            {
+              "url":"this is a leaf set5PBOTJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set5PBOTFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set5PBOTMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"BTRANS",
+          "children":[
+            {
+              "url":"this is a leaf set5BTRANSJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set5BTRANSFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set5BTRANSMAR",
+              "name":"MAR"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"set6",
+      "children":[
+        {
+          "name":"TG",
+          "children":[
+            {
+              "url":"this is a leaf set6TGJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set6TGFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set6TGMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"TV",
+          "children":[
+            {
+              "url":"this is a leaf set6TVJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set6TVFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set6TVMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"PBOT",
+          "children":[
+            {
+              "url":"this is a leaf set6PBOTJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set6PBOTFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set6PBOTMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"BTRANS",
+          "children":[
+            {
+              "url":"this is a leaf set6BTRANSJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set6BTRANSFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set6BTRANSMAR",
+              "name":"MAR"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"set7",
+      "children":[
+        {
+          "name":"TG",
+          "children":[
+            {
+              "url":"this is a leaf set7TGJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set7TGFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set7TGMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"TV",
+          "children":[
+            {
+              "url":"this is a leaf set7TVJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set7TVFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set7TVMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"PBOT",
+          "children":[
+            {
+              "url":"this is a leaf set7PBOTJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set7PBOTFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set7PBOTMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"BTRANS",
+          "children":[
+            {
+              "url":"this is a leaf set7BTRANSJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set7BTRANSFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set7BTRANSMAR",
+              "name":"MAR"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"set8",
+      "children":[
+        {
+          "name":"TG",
+          "children":[
+            {
+              "url":"this is a leaf set8TGJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set8TGFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set8TGMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"TV",
+          "children":[
+            {
+              "url":"this is a leaf set8TVJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set8TVFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set8TVMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"PBOT",
+          "children":[
+            {
+              "url":"this is a leaf set8PBOTJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set8PBOTFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set8PBOTMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"BTRANS",
+          "children":[
+            {
+              "url":"this is a leaf set8BTRANSJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set8BTRANSFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set8BTRANSMAR",
+              "name":"MAR"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name":"set9",
+      "children":[
+        {
+          "name":"TG",
+          "children":[
+            {
+              "url":"this is a leaf set9TGJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set9TGFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set9TGMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"TV",
+          "children":[
+            {
+              "url":"this is a leaf set9TVJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set9TVFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set9TVMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"PBOT",
+          "children":[
+            {
+              "url":"this is a leaf set9PBOTJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set9PBOTFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set9PBOTMAR",
+              "name":"MAR"
+            }
+          ]
+        },
+        {
+          "name":"BTRANS",
+          "children":[
+            {
+              "url":"this is a leaf set9BTRANSJAN",
+              "name":"JAN"
+            },
+            {
+              "url":"this is a leaf set9BTRANSFEB",
+              "name":"FEB"
+            },
+            {
+              "url":"this is a leaf set9BTRANSMAR",
+              "name":"MAR"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "url":"some top level url",
+  "name":"i7j",
+  "children":[
+    {
+      "name":"amwg",
+      "children":[
+        {
+          "name":"b1850c5_t2",
+          "children":[
+            {
+              "name":"1 - Tables of global, tropical, and extratropical DJF, JJA, ANN means and RMSE",
+              "children":[]
+            },
+            {
+              "name":"2 - Line Plots of Annual Implied Northward Transport",
+              "children":[
+                {
+                  "name":"Ocean_Heat",
+                  "children":[
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|ANN|Ocean_Heat|dataset0",
+                      "name":"ANN"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|DJF|Ocean_Heat|dataset0",
+                      "name":"DJF"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|MAM|Ocean_Heat|dataset0",
+                      "name":"MAM"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|JJA|Ocean_Heat|dataset0",
+                      "name":"JJA"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|SON|Ocean_Heat|dataset0",
+                      "name":"SON"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|JAN|Ocean_Heat|dataset0",
+                      "name":"JAN"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|FEB|Ocean_Heat|dataset0",
+                      "name":"FEB"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|MAR|Ocean_Heat|dataset0",
+                      "name":"MAR"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|APR|Ocean_Heat|dataset0",
+                      "name":"APR"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|MAY|Ocean_Heat|dataset0",
+                      "name":"MAY"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|JUN|Ocean_Heat|dataset0",
+                      "name":"JUN"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|JUL|Ocean_Heat|dataset0",
+                      "name":"JUL"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|AUG|Ocean_Heat|dataset0",
+                      "name":"AUG"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|SEP|Ocean_Heat|dataset0",
+                      "name":"SEP"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|OCT|Ocean_Heat|dataset0",
+                      "name":"OCT"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|NOV|Ocean_Heat|dataset0",
+                      "name":"NOV"
+                    },
+                    {
+                      "url":"baseurl:|amwg|2 - Line Plots of Annual Implied Northward Transport|DEC|Ocean_Heat|dataset0",
+                      "name":"DEC"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name":"3 - Line Plots of  Zonal Means",
+              "children":[]
+            },
+            {
+              "name":"4 - Vertical Contour Plots Zonal Means",
+              "children":[]
+            },
+            {
+              "name":"5 - Horizontal Contour Plots of Seasonal Means",
+              "children":[]
+            },
+            {
+              "name":"6 - Horizontal Vector Plots of Seasonal Means",
+              "children":[]
+            },
+            {
+              "name":"7 - Polar Contour and Vector Plots of Seasonal Means",
+              "children":[]
+            },
+            {
+              "name":"8 - Annual Cycle Contour Plots of Zonal Means ",
+              "children":[]
+            },
+            {
+              "name":"9 - Horizontal Contour Plots of DJF-JJA Differences",
+              "children":[]
+            },
+            {
+              "name":"10 - Annual Line Plots of  Global Means",
+              "children":[]
+            },
+            {
+              "name":"11 - Pacific annual cycle, Scatter plots",
+              "children":[]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

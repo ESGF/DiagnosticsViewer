@@ -1,0 +1,50 @@
+{% load staticfiles %}
+
+<html>
+
+	<head>
+	
+	</head>
+
+	<body>
+	
+	<div id="pollid"></div>
+
+
+
+	
+	<script src="{% static 'exploratory_analysis/js/jquery/jquery-1.10.2.min.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/bootstrap/bootstrap.min.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/bootstrap/bootstrap-combobox.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/d3/d3.min.js' %}"></script>
+	<script  type="text/javascript">
+	$(document).ready(function(){
+
+		
+		
+		
+	});
+
+	/*
+	(function poll() {
+	    $.ajax({
+	        url: "http://localhost:8081/message_reader/messages",
+	        type: "GET",
+	        success: function(data) {
+	            console.log("polling " + poll);
+	            //$('#pollid').append('<div>' + poll +  '</div>')
+	            //poll = poll + 1;
+	        },
+	        //dataType: "json",
+	        complete: setTimeout(function() {poll()}, 5000),
+	        timeout: 2000
+	    })
+	})();
+	*/
+	</script>
+
+
+	</body>
+
+
+</html>

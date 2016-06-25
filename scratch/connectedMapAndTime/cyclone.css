@@ -1,0 +1,55 @@
+body {
+  font: 10px sans-serif;
+}
+
+svg,
+canvas {
+  position: absolute;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+//.x.axis path {
+//  display: none;
+//}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.overlay {
+    fill: none;
+    pointer-events: all;
+}
+
+.focus circle {
+    fill: none;
+    stroke: black;
+}
+
+.focus line {
+    fill: none;
+    stroke: black;
+    stroke-width: 1;
+}
+
+.bullet .title { font-size: 14px; font-weight: bold; }
+.bullet .subtitle { fill: #999; }
+/*
+.brush .extent {
+  stroke: #000;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+.grid-background {
+  fill: white;
+}
+*/

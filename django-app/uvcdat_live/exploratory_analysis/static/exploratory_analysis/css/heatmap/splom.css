@@ -1,0 +1,10 @@
+line {
+  stroke: #eee;
+  shape-rendering: crispEdges;
+}
+title {
+  font: 2px sans-serif;
+}
+rect {
+  cursor: crosshair;
+}

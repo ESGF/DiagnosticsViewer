@@ -1,0 +1,22 @@
+{
+ "name": "LND_DIAG",
+ "url": "http://cds.ccs.ornl.gov/y9s/singlef/i1850cn_cruncep_CNDA_Cli_b_2000-2009-i1850cn_cruncep_ctl_2000-2009/setsIndex.html",
+ "children": [
+  {
+   "name": "Set 1",
+   "children": [
+    {
+     "name": "TSA"
+    }
+    ]
+  },
+  {
+   "name": "Set 2",
+   "children": [
+    {
+     "name": "TSA"
+    }
+    ]
+  }
+  ]
+}

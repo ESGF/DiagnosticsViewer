@@ -1,0 +1,116 @@
+
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+
+
+{% block content %}
+
+
+<!-- Bootstrap core CSS -->
+	<link href="{% static 'exploratory_analysis/css/bootstrap/bootstrap.css' %}" rel="stylesheet" />
+	
+	<link href="{% static 'exploratory_analysis/css/sticky-footer-navbar.css' %}" rel="stylesheet" />
+	<link href="{% static 'exploratory_analysis/css/navbar-fixed-top.css' %}" rel="stylesheet" />
+	<link href="{% static 'exploratory_analysis/css/grid.css' %}" rel="stylesheet" />
+	
+	<link href="{% static 'exploratory_analysis/css/tree/style.css' %}" rel="stylesheet" />
+
+
+    <style type="text/css">
+
+.form-signin {
+        max-width: 300px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        border: 1px solid #e5e5e5;
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form-signin .form-signin-heading,
+      .form-signin .checkbox {
+        margin-bottom: 10px;
+      }
+      .form-signin input[type="text"],
+      .form-signin input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
+
+		html {
+			overflow-y: scroll;
+		}
+		
+    </style>
+    
+    
+    <body>
+
+<!-- <div class="greentext">index.htm </div> -->
+
+
+<!-- Fixed navbar -->
+		
+
+	 <div class="form-signin">
+	        <h2 class="form-signin-heading">Please sign in</h2>
+	        <input type="text" class="input-block-level" id='username' placeholder="Username">
+	        <input type="password" class="input-block-level" id='password' placeholder="Password">
+	        
+	        <!-- 
+	        <label class="checkbox">
+	          <input type="checkbox" value="remember-me"> Remember me
+	        </label>
+	         -->
+	        <button class="btn btn-large btn-primary" type="submit" id="signin">Sign in</button>
+	        <!-- 
+	        <button class="btn btn-large btn-primary" type="submit" id="register">Register</button>
+	      	-->
+	     	<div id="registration_form" style="display:none">
+		     	<br>
+		        </br>
+		        
+		     	<input type="text" class="input-block-level" id='register_username' placeholder="Username">
+		        <input type="password" class="input-block-level" id='register_password' placeholder="Password">
+		        <input type="text" class="input-block-level" id='register_email' placeholder="email">
+		        
+	     	</div>
+
+	     	<div id="register_notice" style="color:black;margin-top:15px">
+	     		Not a user? Register for an 
+	     		<a href="http://esg.ccs.ornl.gov/esgf-web-fe/createAccount" target="_blank" style="color:blue">
+	     		ESGF account</a>.
+	     	</div>
+	     	
+	     	<div id="auth_notice" style="display:none;color:red;margin-top:15px">Username or password are incorrect</div>
+	     	
+	</div>	
+	
+    <script src="{% static 'exploratory_analysis/js/jquery/jquery-1.10.2.min.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/bootstrap/bootstrap.min.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/bootstrap/bootstrap-combobox.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/d3/d3.min.js' %}"></script>
+	
+	<script src="{% static 'exploratory_analysis/js/security/signin.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/security/user_registration.js' %}"></script>
+
+	<script type="text/javascript">
+	
+	
+
+	</script>
+
+    
+</body>
+
+
+{% endblock %}

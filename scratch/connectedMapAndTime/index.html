@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<link href="cyclone.css" rel="stylesheet">
+
+<body>
+    <div id="vis"></div>
+
+    <script src="http://d3js.org/d3.v3.js"></script>
+
+
+<!--
+    <script src="time.js"></script>
+    <script src="map.js"></script>
+    
+    <script>
+        var parseDate = d3.time.format("%Y%m").parse;
+
+        d3.json("BTRAN.json", function(error, mapdata) {
+            create_map_canvas(mapdata.geo_average_data, "#geoplot", 720, 360);
+
+            d3.json("TLAI-avg.json", function(error, timedata) {
+                timedata.forEach(function(d) {
+                    d.date = parseDate(d.date);
+                });
+                create_multiseries_time_plot(timedata, "#timeplot", 720, 130);
+            });
+        });
+    </script>
+-->
+
+    <script src="cyclone.js"></script>
+    <script>
+        var parseDate = d3.time.format("%Y%m").parse;
+
+        d3.json("json_grid_data/TLAI-geogrid-0151-01.json", function(error, mapdata) {
+            
+            d3.json("./json_grid_data/TLAI-timeseries-293-546.json", function(error, timedata) {
+                var current_year = +timedata.start_year;
+                var current_month = +timedata.start_month;
+                var timeseries_objects = [];
+                timedata.timeseries_data.forEach(function(d) {
+                    //d.date = parseDate(d.date);
+                    var obj = {};
+                    obj.date = new Date(current_year, (current_month-1), 1, 0, 0, 0, 0);
+                    obj.value = d;
+                    timeseries_objects.push(obj);
+                    //console.log(obj);
+                    if (current_month == 12) {
+                        current_month = 1;
+                        current_year++;
+                    } else {
+                        current_month++;
+                    }
+                });
+                create_cyclone_plot(mapdata.geo_data, timeseries_objects, "#vis");
+            });
+        });
+    </script>
+</body>
+</html>

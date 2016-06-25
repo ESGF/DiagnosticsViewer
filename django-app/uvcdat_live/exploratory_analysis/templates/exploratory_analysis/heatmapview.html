@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="container-fluid">
+	<div class="row-fluid">
+
+	</div>
+
+	<span id="heatmapview_username" style="display:none">{{username}}</span>
+
+	<div class="row-fluid">
+
+		<div class="well col-md-2">
+			<div class="row-fluid">
+				<h2><font style="color:darkgrey">Heatmap</font></h2>
+			</div>
+			<hr>
+			<div class="row-fluid">
+				<label for="selectD">Dataset:</label>
+				<br>
+				<select id="selectD" multiple="multiple"></select>
+				<br>
+				<!--
+				<div class="dropdown"  id="dropdown-dataset-container" >
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">CLM Datasets<b class="caret"></b></a>
+					<ul class="dropdown-menu dropdown-dataset-menu">
+
+					</ul>
+				</div>
+				-->
+
+			</div>
+
+			<hr>
+
+			<div class="row-fluid" >
+
+				<label for="selectXX">Column Variables:</label>
+				<br>
+				<select id="selectXX" multiple="true" ></select>
+				<br>
+				<br>
+				<label for="selectYY">Row Variables:</label>
+				<br>
+				<select id="selectYY" multiple="true" ></select>
+				<br>
+				<br>
+
+				<button class="btn btn-default" onclick="editview()">
+					Apply
+				</button>
+
+			</div>
+			<!--
+			<hr>
+			<div class="row-fluid" >
+
+			<h3>Goto:</h3>
+			<label for="selectX">Column:</label>
+			<br>
+			<select id="selectX" multiple="multiple"></select>
+			<br>
+
+			<label for="selectY"><font>Row:</font></label>
+			<br>
+			<select id="selectY" multiple="multiple"></select>
+			<br>
+			<br>
+
+			<button class="btn btn-default" onclick="gotoselected()">
+			Go
+			</button>
+			</div>
+			-->
+		</div>
+
+		<div class="col-md-10">
+
+			<div class="row-fluid">
+
+				<div id="chart"></div>
+
+				<br>
+				<div id="spinner"></div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/cross.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/d3.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/d3.csv.js' %}"></script>
+
+<!-- 
+<script src="http://cdn.jquerytools.org/1.2.6/full/jquery.tools.min.js"></script>
+ -->
+<script src="{% static 'exploratory_analysis/js/jquery/jquery.tools.min.js' %}"></script>
+
+
+
+<!-- 
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" />
+ -->
+<link rel="stylesheet" type="text/css" href="{% static 'exploratory_analysis/css/jquery/jquery-ui.css' %}" />
+<!-- 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+<<<<<<< HEAD
+  -->
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery-ui.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/ui.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery.multiselect.filter.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery.tipsy.js' %}"></script>
+
+<!-- 
+=======
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/jquery.tipsy.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/ui.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/jquery.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/jquery.multiselect.filter.js' %}"></script>
+
+>>>>>>> harney-devel-jewellintegration
+ -->
+
+
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/heatmap.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/variablelist.js' %}"></script>
+{% endblock %}
+

@@ -1,6 +1,103 @@
 .greentext {
-  color:green;
-  font-size: 24px;
+	color: green;
+	font-size: 24px;
 }
 
+.checkboxselection {
+	margin-right: 10px;
+}
+
+.node {
+	cursor: pointer;
+}
+
+.node circle {
+	fill: #fff;
+	stroke: steelblue;
+	stroke-width: 1.5px;
+}
+
+.node text {
+	font: 10px sans-serif;
+}
+
+.link {
+	fill: none;
+	stroke: #ccc;
+	stroke-width: 1.5px;
+}
+a.disabled:link, a.disabled:visited {
+	color: grey;
+}
+.thumbnail {
+	display: block;
+	padding: 4px;
+	overflow: hidden;
+}
+
+.thumbnail {
+	width: 225px;
+	height: 225px;
+	overflow: hidden;
+	padding: 4px;
+	display: block;
+}
+
+.thumbnail1 img {
+	display: block;
+	max-height: 100%;
+	max-width: 100%;
+	border: 0;
+}
+
+svg {
+	overflow-x: visible;
+}
+
+.hiddentext {
+	display: none
+}
+
+.hiddenfunctionality {
+	display: none
+}
+
+ul.dropdown-menu-form {
+	padding: 5px 10px 0;
+	max-height: 300px;
+	overflow-y: scroll;
+}
+
+#myModal1 {
+
+	margin-top: 150px
+}
+
+/* Start by setting display:none to make this hidden.
+ Then we position it in relation to the viewport window
+ with position:fixed. Width, height, top and left speak
+ speak for themselves. Background we set to 80% white with
+ our animation centered, and no-repeating */
+#modal1 {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: rgba( 255, 255, 255, .8 ) url('http://i.stack.imgur.com/FhHRx.gif') 50% 50% no-repeat;
+}
+
+/* When the body has the loading class, we turn
+ the scrollbar off with overflow:hidden */
+body.loading {
+	overflow: hidden;
+}
+
+/* Anytime the body has the loading class, our
+ modal element will be visible */
+body.loading #modal1 {
+	display: block;
+}
 

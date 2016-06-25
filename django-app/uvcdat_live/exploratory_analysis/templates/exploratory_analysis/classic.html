@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<body>
+	<!-- overlay blocking user input while backend is crunching numbers -->
+	<div class="modal" id="modal1"></div>
+
+	<div class="container-fluid">
+
+		<div class="row-fluid">
+
+			<div class="hiddentext">
+				CachedFile: <span id="CachedFile" >{{ cachedfile }}</span>
+				<br>
+				TreeFile: <span id="treeFile">{{ treefile }}</span>
+				<br>
+				CurrentBookmark: <span id="current_bookmark">{{ current_bookmark }}</span>
+				<br>
+				Tree Loaded: <span id="treeloaded">{{ treeloaded }}</span>
+				<br>
+				Username: <span id="username_posted">{{username}}</span>
+
+			</div>
+		</div>
+
+		<span id="mapview_username" style="display:none">{{username}}</span>
+
+		<div class="row">
+			<div class="col-md-12">
+
+				<div class="modal" id="myModal">
+					<div class="modal-dialog" style="width:800px;">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+									×
+								</button>
+								<h4 class="modal-title" id="modal-title"></h4>
+							</div><div class="container"></div>
+							<div class="modal-body">
+
+							</div>
+							<hr>
+							<div class="checkbox" style="margin-left:20px">
+								<label>
+									<input type="checkbox">
+									Share </label>
+							</div>
+							<div class="modal-footer">
+								<span style="margin-right:20px" id=""> Comments: </span>
+								<textarea style="width:55%" class="field span10" id="figure_bookmark_description" rows="3" placeholder="Figure Description"></textarea>								
+								
+			
+			       
+ <a href="#" data-dismiss="modal" class="btn">Close</a>
+								<a href="#" class="btn btn-primary" id="save_plot">Plot Dataset</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal" id="myModal1" data-keyboard="false">
+					<div class="modal-dialog" style="width:300px;">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h4 class="modal-title" id="modal-title">Processing...</h4>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div class="row-fluid">
+
+			<div class="well col-md-2" style="min-width: 225px">
+				<div class="row-fluid">
+					<h2><font style="color:darkgrey">Classic View</font></h2>
+				</div>
+
+				<hr class="create_tree_options">
+
+				<div class="row-fluid create_tree_options">
+					<label for="select_Project" >Project:</label>
+					<br>
+					<select id="select_Project" multiple="multiple"></select>
+					<br>
+				</div>
+				<br>
+				
+				<div class="row-fluid create_tree_options">
+					<label for="selectD" >Dataset:</label>
+					<br>
+					<select id="selectD" multiple="multiple"></select>
+					<br>
+				</div>
+				<br>
+
+				<div class="row-fluid create_tree_options" id="package_button_div">
+					<label for="selectP">Package:</label>
+					<br>
+					<select id="selectP" multiple="multiple"></select>
+					<br>
+				</div>
+				<br>
+
+				<button type="button" class="btn btn-default" id="dataset_selected" onclick="toggle_varSelect()">
+					Next
+				</button>
+
+				<div id="variables_div" style="display:none">
+					<hr>
+					<div class="row-fluid create_tree_options">
+						<label for="selectV">Variables:</label>
+						<br>
+						<select id="selectV" multiple="multiple"></select>
+						<br>
+
+					</div>
+					<br class="create_tree_options">
+
+					<div class="row-fluid create_tree_options">
+						<label for="selectT">Times:</label>
+						<br>
+						<select id="selectT" multiple="multiple"></select>
+						<br>
+
+					</div>
+					<br class="create_tree_options">
+
+					<hr class="create_tree_options">
+
+					<br>
+
+					<div class="row-fluid create_tree_options" id="viz_button">
+
+						<button type="button" class="btn btn-default" id="save_tree">
+							Plot Dataset
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-4" style="border-right: 1px solid #000000; overflow:scroll; resize: both; padding-bottom: 250px; height:650px;max-height:5000px;">
+				<button type="button" id="go_Land_Home_Button"  onclick="go_Land_Home()" style="display:none">
+					Back to Land Home
+				</button>
+				<button type="button" id="go_Atm_Home_Button" onclick="go_Atm_Home()" style="display:none">
+					Back to Atm Home
+				</button>
+				<hr>
+				<div id="landHome" style="display:none">
+					<BODY>
+						<TABLE>
+							<TH><A HREF="http://www.cgd.ucar.edu/tss/clm/diagnostics/index.html"> <font color=blue>LND_DIAG Diagnostics Plots</font></A><font color=black>Source: /tmp/proj/cli017/cli017bgc/y9s/lnd_diag
+						</TABLE>
+						<hr noshade size=2 size="100%">
+						<TABLE>
+							<TR>
+								<TH><font color=red>Set</font><TH ALIGN=LEFT><font color=red>Description</font>
+								<TR>
+									<TH>1 <TH ALIGN=LEFT><a class="classic_toggle_sets" id="classicland_set1" href="#"> Line plots</A> of annual trends in energy balance, soil water/ice and temperature, runoff, snow water/ice, photosynthesis </b>
+									<br>
+									<TR>
+										<TH>2 <TH ALIGN=LEFT> Horizontal <a class="classic_toggle_sets" id="classicland_set2" href="#">contour plots</A> of DJF, MAM, JJA, SON, and ANN means </b>
+										<br>
+										<TR>
+											<TH>3 <TH ALIGN=LEFT><a class="classic_toggle_sets" id="classicland_set3"  href="#">Line plots</A> of monthly climatology: regional air temperature, precipitation, runoff, snow depth, radiative fluxes, and turbulent fluxes </b>
+											<br>
+											<TR>
+												<TH>4 <TH ALIGN=LEFT><span style="font-style:italic; font-weight: bold; color: rgb(255,0,0);">(Inactive)</span> Vertical profiles at selected land raobs stations </b>
+												<br>
+												<TR>
+													<TH>5 <TH ALIGN=LEFT><a class="classic_toggle_sets" id="classicland_set5"  href="#">Tables</A> of annual means </b>
+													<br>
+													<TR>
+														<TH>6 <TH ALIGN=LEFT><a class="classic_toggle_sets" id="classicland_set6" href="#">Line plots</A> of annual trends in regional soil water/ice and temperature, runoff, snow water/ice, photosynthesis </b>
+														<br>
+														<TR>
+															<TH>7 <TH ALIGN=LEFT><a class="classic_toggle_sets" id="classicland_set7" href="#">Line plots, tables, and maps</A> of RTM river flow and discharge to oceans </b>
+															<br>
+															<TR>
+																<TH>8 <TH ALIGN=LEFT><span style="font-style:italic; font-weight: bold; color: rgb(255,0,0);">(Inactive)</span> Line and contour plots of Ocean/Land/Atmosphere CO2 exchange</b>
+																<br>
+																<TR>
+																	<TH>9 <TH ALIGN=LEFT><a class="classic_toggle_sets" id="classicland_set9" href="#">Contour plots</A> and statistics for precipitation and temperature. Statistics include DJF, JJA, and ANN biases, and RMSE, correlation and standard deviation of the annual cycle relative to observations</b>
+																	<br>
+																	<TR>
+
+						</table>
+						<hr noshade size=2 size="100%">
+						<em>Click on Plot Type</em></b>
+						<p>
+							<a class="classic_figure_sets" id="figure_set1" href="#"><img src="/static/exploratory_analysis/img/classic/SET1sn.gif" align=left border=1 hspace=1 alt="Set 1"></a>
+							<a class="classic_figure_sets" id="figure_set2" href="#"><img src="http://www.cgd.ucar.edu/tss/clm/diagnostics/images/SET2sn.gif" align=left border=1 hspace=1 alt="Set 2"></a>
+							<a class="classic_figure_sets" id="figure_set3" href="#"><img src="http://www.cgd.ucar.edu/tss/clm/diagnostics/images/SET3s.gif" align=left border=1 hspace=1 alt="Set 3"></a>
+							<a class="classic_figure_sets" id="figure_set6" href="#"><img src="http://www.cgd.ucar.edu/tss/clm/diagnostics/images/SET6sn.gif" align=left border=1 hspace=1 alt="Set 6"></a>
+							<a class="classic_figure_sets" id="figure_set7" href="#"><img src="http://www.cgd.ucar.edu/tss/clm/diagnostics/images/SET7sn.gif" align=left border=1 hspace=1 alt="Set 7"></a>
+
+							<br clear=left>
+						<p>
+							<br clear=left>
+						<p>
+					</BODY>
+
+				</div>
+
+				<div id="atmHome" style="display:none">
+
+					
+				</div>
+				
+				<div id="downloads_div">
+					<TABLE width='1150' >
+						<TR id="dataset_downloads">
+							
+							<TD><TH ALIGN=left VALIGN=top><font color=blue>Dataset Options:</font>
+							<br>
+							<br>
+							<div id="dataset_downloads_div">
+
+								<A href="javascript:populate_downloads()"> Download Climos Files</A>
+								<br>
+								<A id="publish_link" href="javascript:get_publish_status()"> Publish Dataset to ESGF</A>
+
+							</div>
+				<!--			
+				<button type="downloads" id="downloads_Button" onclick="populate_downloads()" >
+					Download Climos
+				</button>
+							<br>
+				<button type="button" id="go_publish_Button" onclick="get_publish_status()" >
+					Publish to ESGF
+				</button>
+				-->
+							</TD>
+
+						</TR>
+					</TABLE>
+				</div>
+				
+				<div id="lmwg_set1_html" style='display: none'></div>
+				<div id="lmwg_set2_html" style='display: none'></div>
+				<div id="lmwg_set3_html" style='display: none'></div>
+				<div id="lmwg_set5_html" style='display: none'></div>
+				<div id="lmwg_set6_html" style='display: none'></div>
+				<div id="lmwg_set7_html" style='display: none'></div>
+				<div id="lmwg_set9_html" style='display: none'></div>
+
+				<div id="amwg_topten_html" style='display: none'></div>
+				<div id="amwg_set1_html" style='display: none'></div>
+				<div id="amwg_set2_html" style='display: none'></div>
+				<div id="amwg_set3_html" style='display: none'></div>
+				<div id="amwg_set4_html" style='display: none'></div>
+				<div id="amwg_set4a_html" style='display: none'></div>
+				<div id="amwg_set5_html" style='display: none'></div>
+				<div id="amwg_set6_html" style='display: none'></div>
+				<div id="amwg_set7_html" style='display: none'></div>
+				<div id="amwg_set8_html" style='display: none'></div>
+				<div id="amwg_set9_html" style='display: none'></div>
+				<div id="amwg_set10_html" style='display: none'></div>
+				<div id="amwg_set11_html" style='display: none'></div>
+				<div id="amwg_set12_html" style='display: none'></div>
+				<div id="amwg_set13_html" style='display: none'></div>
+				<div id="amwg_set14_html" style='display: none'></div>
+				<div id="amwg_set15_html" style='display: none'></div>
+
+			</div>
+
+			<div class="col-md-6" id="plotSpace" style="overflow:scroll">
+				<div align="left" style="padding: 25px; padding-top:25px">
+					<button id="download" class="plot_btn" type="button" onclick="downloadPlot()" style="display:none">
+						<span class="glyphicon glyphicon-file"></span>
+					</button>
+					<button id="expand" class="plot_btn" type="button" onclick="expandPlot()" style="display:none">
+						<span class="glyphicon glyphicon-new-window"></span>
+					</button>
+					<button id="unglue" class="plot_btn pull_right" type="button" onclick="ungluePlot()" style="display:none">
+						<span class="glyphicon glyphicon-remove"></span>
+					</button>
+
+				</div>
+				<div id="plotArea" style="display:none">
+					<span style="margin-left:10px;font-weight:bold"> Plot for Selected Dataset</span>
+					<body >
+						<p>
+							Selected Plots
+						</p>
+					</body>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	</div>
+
+	</div>
+
+	</div>
+</body>
+
+<link rel="stylesheet" type="text/css" href="{% static 'exploratory_analysis/css/jquery/jquery-ui.css' %}" />
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/responsive/1.0.0/css/dataTables.responsive.css">
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery-ui.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/ui.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery.multiselect.filter.js' %}"></script>
+<script src="{% static 'exploratory_analysis/js/d3/d3.min.js' %}"></script>
+<script src="{% static 'exploratory_analysis/js/classic/classic.js' %}"></script>
+<script src="{% static 'exploratory_analysis/js/parameters.js' %}"></script>
+<script src="{% static 'exploratory_analysis/js/tree/bookmarks.js' %}"></script>
+<script src="{% static 'exploratory_analysis/js/jquery/overlay.js' %}"></script>
+
+{% endblock %}
+
+
+<!-- Taken out April 5
+<TABLE width='1150' >
+					<TR>
+					<TD><TH ALIGN=left VALIGN=top><font color=blue>Set </font><font color=blue>Description</font>
+					<br>
+
+					<font color=red>Top Ten</font><a class="classic_toggle_sets" id="classicatm_topten" href="#">Tier 1A/Top Ten</a> summary for this dataset.<br>
+					<font color=red>0</font><A  class="classic_toggle_sets" id="classicatm_topten" HREF="#"> Top Ten</A> of ANN, DJF, JJA, global and regional means and RMSE.
+					<br>
+					<font color=red>1</font><A  class="classic_toggle_sets" id="classicatm_set1" HREF="#"> Tables</A> of ANN, DJF, JJA, global and regional means and RMSE.
+					<br>
+					<font color=red>2</font><A  class="classic_toggle_sets" id="classicatm_set2" HREF="#"> Line plots</A> of annual implied northward transports.
+					<br>
+					<font color=red>3</font><A  class="classic_toggle_sets" id="classicatm_set3" HREF="#"> Line plots</A> of DJF, JJA and ANN zonal means
+					<br>
+					<font color=red>4</font> Vertical <A  class="classic_toggle_sets" id="classicatm_set4" HREF="#">contour plots</A> of DJF, JJA and ANN zonal means
+					<br>
+					<font color=red>4a</font> Vertical (XZ) <A  class="classic_toggle_sets" id="classicatm_set4a" HREF="#">contour plots</A> of DJF, JJA and ANN meridional means
+					<br>
+					<font color=red>5</font> Horizontal <A  class="classic_toggle_sets" id="classicatm_set5" HREF="#">contour plots</A> of DJF, JJA and ANN means
+					<br>
+					<font color=red>6</font> Horizontal <A  class="classic_toggle_sets" id="classicatm_set6" HREF="#">vector plots</A> of DJF, JJA and ANN means
+					<br>
+					<font color=red>7</font> Polar <A  class="classic_toggle_sets" id="classicatm_set7" HREF="#">contour and vector plots</A> of DJF, JJA and ANN means
+					<br>
+					<font color=red>8</font> Annual cycle <A  class="classic_toggle_sets" id="classicatm_set8" HREF="#">contour plots</A> of zonal means
+					<br>
+					<font color=red>9</font> Horizontal <A  class="classic_toggle_sets" id="classicatm_set9" HREF="#">contour plots</A> of DJF-JJA differences
+					<br>
+					<font color=red>10</font> Annual cycle line <A  class="classic_toggle_sets" id="classicatm_set10" HREF="#">plots</A> of global means
+					<br>
+					<font color=red>11</font> Pacific annual cycle, Scatter plot <A  class="classic_toggle_sets" id="classicatm_set11" HREF="#">plots</A>
+					<br>
+					<font color=red>12</font> Vertical profile <A  class="classic_toggle_sets" id="classicatm_set12" HREF="#">plots</A> from 17 selected stations
+					<br>
+					<font color=red>13</font> ISCCP cloud simulator <A  class="classic_toggle_sets" id="classicatm_set13" HREF="#">plots</A>
+					<br>
+					<font color=red>14</font> Taylor Diagram <A  class="classic_toggle_sets" id="classicatm_set14" HREF="#">plots</A>
+					<br>
+					<font color=red>15</font> Annual Cycle at Select Stations <A  class="classic_toggle_sets" id="classicatm_set15" HREF="#">plots</A>
+					<br>
+					<br>
+					</TD>
+
+					</TR>
+					</TABLE>
+					<hr noshade size=2 size="100%">
+					<TABLE width='1150' >
+					<TR id="dataset_downloads" style='display: none'>
+
+					<TD><TH ALIGN=left VALIGN=top><font color=blue>Downloads</font>
+					<br>
+					<div id="dataset_downloads_div">
+					</TABLE>
+					<!--
+					<A class="disabled"> Climos</A>
+					<br>
+					<A class="disabled"> Raw</A>
+
+					</div>
+					<br>
+					</TD>
+
+					</TR>
+
+					</BODY>
+-->

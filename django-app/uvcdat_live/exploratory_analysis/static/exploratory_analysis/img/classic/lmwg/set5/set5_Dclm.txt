@@ -1,0 +1,47 @@
+DIAG SET 5: CLM ANNUAL MEANS OVER LAND - DIFFERENCE (case1 - case2)
+ 
+TEST CASE (case1):      i1850cn_cruncep_CNDA_Cli_b  (yrs 2000-2009)
+ 
+REFERENCE CASE (case2): i1850cn_cruncep_ctl  (yrs 2000-2009)
+ 
+DIFFERENCE:            (i1850cn_cruncep_CNDA_Cli_b) - (i1850cn_cruncep_ctl)
+ 
+Variable                                                              case1-case2
+ 
+TSA(K) 2m air temperature                                             0.88034058
+PREC(mm/d) ppt: rain+snow                                             0.05704308
+RAIN(mm/d) atmospheric rain                                           0.07369614
+SNOW(mm/d) atmospheric snow                                          -0.01665944
+SNOWDP(m) snow height                                                -0.00114045
+FSNO(unitless) fraction of ground covered by snow                    -0.00687076
+H2OSNO(mm) total snow water equiv (SNOWICE + SNOWLIQ)                 0.18781662
+VBSA(% reflected) visible black-sky albedo                           -0.17352962
+NBSA(% reflected) near-IR black-sky albedo                            0.07751083
+VWSA(% reflected) visible white-sky albedo                           -0.14140320
+NWSA(% reflected) near-IR white-sky albedo                            0.10101318
+RNET(W/m^2) net radiation:fsa-fira                                   -3.19143677
+LHEAT(W/m^2) latent heat:FCTR+FCEV+FGEV                              -0.31860352
+FSH(W/m^2) sensible heat                                             -2.89756393
+FSDS(W/m^2) atmospheric incident solar radiation                      0.03967285
+FSA(W/m^2) absorbed solar radiation                                  -0.04315186
+FLDS(W/m^2) atmospheric longwave radiation                            0.46771240
+FIRE(W/m^2) emitted infrared (longwave) radiation                     3.61419678
+FCTR(W/m^2) canopy transpiration                                     -0.55472565
+FCEV(W/m^2) canopy evaporation                                        0.71071053
+FGEV(W/m^2) ground evaporation                                       -0.47449112
+FGR(W/m^2) heat flux into snow/soil (includes snow melt)              0.02049616
+FSM(W/m^2) snow melt heat flux                                        0.01035774
+TLAI(m2/m2) total one-sided leaf area index                           0.25294518
+TSAI(m2/m2) total one-sided stem area index                          -0.00238872
+LAISUN(m^2/m^2) Sunlit Projected Leaf Area Index                      0.00658423
+LAISHA(m^2/m^2) Shaded Projected Leaf Area Index                      0.24574387
+ET(mm/d) Evapotranspiration                                        -999.00000000
+QOVER(mm/d) surface runoff                                            0.02328615
+QDRAI(mm/d) sub-surface drainage                                      0.04190157
+QRGWL(mm/d) surface runoff at glaciers, wetlands, lakes               0.00148604
+WA(mm) water in the unconfined aquifer                               91.59350586
+WT(mm) total water storage                                          104.48950195
+ZWT(m) water table depth                                             -0.49510574
+QCHARGE(mm/d) aquifer recharge rate                                   0.06619668
+FCOV(unitless [0-1]) fractional area with water table at surface      0.00501360
+CO2_PPMV(ppmv) CO2 concentration                                     92.85388184

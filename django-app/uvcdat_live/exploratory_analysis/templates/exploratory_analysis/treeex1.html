@@ -1,0 +1,609 @@
+
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+
+
+{% block content %}
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+
+	<link href="{% static 'exploratory_analysis/css/bootstrap/bootstrap.css' %}" rel="stylesheet" />
+	
+	<link href="{% static 'exploratory_analysis/css/tree/style.css' %}" rel="stylesheet" />
+	
+	<!--  
+	<link href="{% static 'exploratory_analysis/css/tree/style.css' %}" rel="stylesheet" />
+	-->
+<style>
+
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 10px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+.thumbnail {
+    display:block;
+    padding:4px;
+    overflow:hidden;
+}
+
+.thumbnail{
+    width:225px;
+    height:225px;
+    overflow:hidden;
+    padding:4px;
+    display:block;
+}
+
+.thumbnail1 img {
+    display:block;
+    max-height:100%;
+    max-width:100%;
+    border:0;
+}
+
+
+svg {
+  overflow-x:visible;
+}
+
+
+.hiddentext {
+	display:none 
+}
+
+.hiddenfunctionality {
+	display:none 
+}
+
+ul.dropdown-menu-form {
+    padding: 5px 10px 0;
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+#myModal1 {
+
+	margin-top: 150px
+}
+
+
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   speak for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+#modal1 {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;   
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading #modal1 {
+    display: block;
+}
+
+
+
+</style>
+<body>
+
+	<div id="csrf">
+	{% csrf_token %}
+	</div>
+
+	<!-- overlay blocking user input while backend is crunching numbers -->
+	<div class="modal" id="modal1"></div>
+ 
+
+	<div id="api_check" class="hiddenfunctionality">
+		<div>
+		     	<button type="button" class="btn btn-default" id="test2" >Post tree bookmark</button>
+		     	<button type="button" class="btn btn-default" id="test3" >Delete tree bookmark</button>
+		     	<button type="button" class="btn btn-default" id="test4" >Get tree bookmark</button>
+		</div>
+		<div>
+		     	<button type="button" class="btn btn-default" id="test12" >Post figure bookmark</button>
+		     	<button type="button" class="btn btn-default" id="test13" >Delete figure bookmark</button>
+		     	<button type="button" class="btn btn-default" id="test14" >Get figure bookmark</button>
+		     
+		</div>
+		<div>
+		     	<button type="button" class="btn btn-default" id="timeseriestest" >Time series test</button>
+		</div>
+	</div>   
+	
+	<div class="container-fluid">
+	
+		<div class="row-fluid">
+
+			<div class="well col-md-2">
+				<div class="row-fluid">
+					<h2><font style="color:darkgrey">Diagnostics Tree</font></h2>
+				</div>
+				<hr>
+			
+				<div class="row-fluid">
+					<label for="selectD">Dataset:</label>
+					<br>
+					<select id="selectD" multiple="multiple"></select>
+					<br>
+					<!--
+					<div class="dropdown"  id="dropdown-dataset-container" >
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">CLM Datasets<b class="caret"></b></a>
+						<ul class="dropdown-menu dropdown-dataset-menu">
+	
+						</ul>
+					</div>
+					-->
+	
+				</div>
+				<br>
+				<div class="row-fluid">
+					<label for="selectV">Variable:</label>
+					<br>
+					<select id="selectV" multiple="multiple"></select>
+					<br>
+					<!--
+					<div class="dropdown"  id="dropdown-dataset-container" >
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">CLM Datasets<b class="caret"></b></a>
+						<ul class="dropdown-menu dropdown-dataset-menu">
+	
+						</ul>
+					</div>
+					-->
+	
+				</div>
+				<br>
+				<div class="row-fluid" id="viz_button">
+					<button type="button" class="btn btn-default" >
+						Submit
+					</button>
+				</div>
+				<hr>
+				<h4>Animate</h4>
+				<div class="row-fluid">
+					<div class="col-md-12">
+						<button type="button" class="btn btn-default" onclick="play_button()" style="display:null">
+							<span>Play</span>
+						</button>
+					
+						<button type="button" class="btn btn-default" onclick="stop_button()" style="display:null">
+							<span>Stop</span>
+						</button>
+	
+					</div>
+				</div>
+			</div>
+		</div>
+	<!-- 
+		<div class="hiddentext">
+			CachedFile: <span id="CachedFile" >{{ cachedfile }}</span>
+			<br>
+			TreeFile: <span id="treeFile">{{ treefile }}</span>
+			<br>
+			CurrentBookmark: <span id="current_bookmark">{{ current_bookmark }}</span>
+			<br>
+			Tree Loaded: <span id="treeloaded">{{ treeloaded }}</span>
+			<br>
+			Username: <span id="username_posted">{{username}}</span>
+		
+		</div>
+     
+   
+    <div class="row">
+		<div class="col-md-12">
+			
+			<div class="modal" id="myModal">
+				<div class="modal-dialog" style="width:800px;">
+			      <div class="modal-content">
+			        <div class="modal-header">
+			          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			          <h4 class="modal-title" id="modal-title"></h4>
+			        </div><div class="container"></div>
+			        <div class="modal-body">
+			          
+			        </div>
+			        <hr>
+			        <div class="checkbox" style="margin-left:20px">
+					  <label>
+					    <input type="checkbox"> Share
+					  </label>
+					</div>
+			        <div class="modal-footer">
+			        <span style="margin-right:20px" id=""> Comments: </span>
+			        	
+			       		<textarea style="width:55%" class="field span10" id="figure_bookmark_description" rows="3" placeholder="Figure Description"></textarea>
+			
+			       
+			          <a href="#" data-dismiss="modal" class="btn">Close</a>
+			          <a href="#" class="btn btn-primary" id="save_plot">Save</a>
+			        </div>
+			      </div>
+			    </div>
+			</div>
+
+
+			<div class="modal" id="myModal1" data-keyboard="false">
+				<div class="modal-dialog" style="width:300px;">
+			      <div class="modal-content">
+			        <div class="modal-header">
+			        <h4 class="modal-title" id="modal-title">Processing...</h4>
+			        </div>
+			      </div>
+			    </div>
+			</div>
+			
+			
+			
+		
+		</div>
+	    		
+	</div>
+    	
+    <div class="row">
+		<div class="col-md-12">
+			<div class="page-header">
+  			<h1>Exploratory Analysis - Diagnostics Tree Viewer</h1>
+			</div>
+		
+		</div>
+	    		
+	</div>	
+	
+    
+    <div class="row" style="margin-bottom:10px">
+    	<div class="bs-example">
+   
+		    <ul class="nav nav-pills">
+		    	<li>
+		    		<button type="button" class="btn btn-default" id="create_tree" >Create Tree</button>
+		    	</li>
+		    
+		        <li class="dropdown">
+		            <a href="#" data-toggle="dropdown" class="dropdown-toggle">Bookmarks <b class="caret"></b></a>
+		            <ul class="dropdown-menu" id="bookmark_menu">
+		            	{% for bookmark in bookmark_list %}
+		            	<li>
+		            		<a href="./?bookmark={{bookmark}}" id="{{bookmark}}" class="tree_bookmark_menu">{{bookmark}}</a>
+		            	
+		            	</li>	
+		            	{% endfor %}
+		            	
+		            </ul>
+		        </li>
+		        <li class="dropdown">
+		            <a href="#" data-toggle="dropdown" class="dropdown-toggle">Saved Images <b class="caret"></b></a>
+		            <ul class="dropdown-menu" id="bookmark_menu">
+		            	{% for figure_bookmark in figure_bookmark_list %}
+		            		<li><a data-toggle="modal" href="#myModal" class="figure_bookmark" id="{{figure_bookmark}}">{{figure_bookmark}}</a></li>
+		            	{% endfor %}
+		            	
+		            </ul>
+		        </li>
+		    </ul>
+    
+		</div>
+
+    </div>
+    
+    
+	
+    <div class="row" style="margin-bottom:10px;display:none;border: 1px solid #000000;padding:10px" id="create_tree_options"  >
+    	<div class="col-lg-12">
+    	
+    		
+    		<h4 style="margin-top:5px">Dataset</h4>
+    		<div style="overflow-y: scroll;max-height:150px">
+    		{% for dataset in dataset_list %}
+			<input name="{{dataset}}" id="{{dataset}}" type="radio" value="{{dataset}}" class="dataset_list" checked>
+			<label for="{{dataset}}" class="checkboxselection">{{dataset}}</label>
+			{% endfor %}
+			</div>
+			
+			<hr>
+			
+			
+    		<h4 style="margin-top:5px">Package</h4>
+    		<div style="overflow-y: scroll;max-height:150px">
+    		{% for package in package_list %}
+			<input name="{{package}}" id="{{package}}" type="radio" value="{{package}}" class="package_list" checked>
+			<label for="{{package}}" class="checkboxselection">{{package}}</label>
+			{% endfor %}
+			</div>
+			
+			<hr>
+			
+			<h4 style="margin-top:5px">Variables</h4>
+			<div style="overflow-y: scroll;max-height:150px">
+			{% for variable in variable_list %}
+			<input name="{{variable}}" id="{{variable}}" type="checkbox" value="signup" class="variable_list" >
+			<label for="{{variable}}" class="checkboxselection">{{variable}}</label>
+			{% endfor %}
+			</div>
+	    	
+			<hr>
+			
+			<h4 style="margin-top:5px">Seasons</h4>
+			<div style="overflow-y: scroll;max-height:150px">
+			{% for season in season_list %}
+			<input name="{{season}}" id="{{season}}" type="checkbox" value="signup" class="season_list" >
+			<label for="{{season}}" class="checkboxselection">{{season}}</label>
+			{% endfor %}
+			</div>
+			\
+		</div>
+		<hr>
+		<div class="col-lg-12">
+		  	<div class="col-lg-1">
+		    	<button type="button" class="btn btn-default" id="save_tree" >Save</button>
+		  	</div>
+			<div class="col-lg-4">
+		    	<input type="text" class="form-control" placeholder="Tree Bookmark Name (optional)" id="tree_name">
+		  	</div>
+		  	<div class="col-lg-1">
+		    	<button type="button" class="btn btn-default" id="bookmark_cancel">Cancel</button>
+		  	</div>
+		</div>
+    </div>
+    
+    
+    
+	<div class="row" style="" id="treeviewer">
+		<div class="col-md-2">
+		
+		
+		</div>
+		
+		
+		<div class="col-md-10">
+			<div class="row" style="border: 1px solid #000000;">
+				<div class="col-md-9" style="border-right: 1px solid #000000;height:900px;max-height:900px">
+
+				<span style="margin-left:10px;font-weight:bold"> Tree Name: </span><span id="current_treename">{{current_bookmark}}</span>
+				
+					<div id="treeimg" style="overflow-x:visible">
+			
+					</div>
+				</div>
+				<div class="col-md-3 scrollable" id="gallery"  style="overflow:scroll;max-height:900px">
+					
+				</div>
+			</div>
+		
+		</div>
+		
+		
+	</div>
+	 
+	 -->
+	 
+	</div>
+
+	<script src="{% static 'exploratory_analysis/js/jquery/jquery-1.10.2.min.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/bootstrap/bootstrap.min.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/bootstrap/bootstrap-combobox.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/bootstrap/bootstrap-popover.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/bootstrap/bootstrap-dropdown.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/d3/d3.min.js' %}"></script>
+	<!--  -->
+	<script src="{% static 'exploratory_analysis/js/tree/dynamictree.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/tree/bookmarks.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/tree/submittree.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/tree/savetree.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/tree/saveplot.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/tree/retrieveplot.js' %}"></script>
+	<script src="{% static 'exploratory_analysis/js/jquery/overlay.js' %}"></script>
+
+</body>
+
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/variablelist.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/timelist.js' %}"></script>
+<script src="http://cdn.jquerytools.org/1.2.6/full/jquery.tools.min.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" />
+
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/ui.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/jquery.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/heatmap/jquery.multiselect.filter.js' %}"></script>
+<script src="{% static 'exploratory_analysis/js/d3/d3.min.js' %}"></script>
+
+<script>
+
+
+$(document).ready(function(){
+
+
+	
+	//for post requests, need to get the csrf token
+	function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+    
+	console.log('csrftoken ' + csrftoken);
+	
+
+	
+	$('#timeseriestest').click(function() {
+		alert('time series test');
+		console.log('time series test');
+		
+		var input_data = {
+				'csrfmiddlewaretoken': csrftoken,
+				'variable':'variable1',
+				'lat':30,
+				'lon':30
+		}
+		
+		var url = 'http://localhost:8081/exploratory_analysis/timeseries1/';
+		$.ajax({
+			  type: "POST",
+			  url: url,
+			  async: false,
+			  data: input_data,
+			  success: function(data)
+			  { 
+				  console.log('success ' + data);
+			  },
+			  error: function(xhr, status, error) {
+				  console.log('error'); 
+			    if(xhr.status==404)
+			    { 
+			    	
+			    }
+			  }
+			});
+		
+		
+	});
+	
+	
+	
+	$('#create_tree').click(function(){
+		
+		if(this.innerHTML == "Cancel") {
+			$('#create_tree_options').hide();
+			this.innerHTML = "Create New Tree";
+		} else {
+			$('#create_tree_options').show();
+			$('#treeviewer').hide();
+			this.innerHTML = "Cancel";
+		}
+		
+		
+	});
+	
+	
+	$('.dropdown-menu').on('click', function(e) {
+	    if($(this).hasClass('dropdown-menu-form')) {
+	        e.stopPropagation();
+	    }
+	});
+	
+	var treeloaded = $('#treeloaded').html();
+	
+	if(treeloaded == 'false')
+		$('#treeviewer').hide();
+	
+	
+	
+	
+	
+	$('#test').click(function() {
+		
+
+		console.log('csrftoken in test ' + csrftoken);
+		
+		var data = {'csrfmiddlewaretoken': csrftoken};
+		var fileUrl = 'http://localhost:8081/exploratory_analysis/test/';
+		$.ajax({
+			  type: "POST",
+			  url: fileUrl,
+			  async: false,
+			  data: data,
+			  success: function()
+			  { 
+				  console.log('success');
+			  },
+			  error: function(xhr, status, error) {
+				  console.log('error'); 
+			    if(xhr.status==404)
+			    { 
+			    	
+			    }
+			  }
+			});
+		
+		
+	});
+	
+	
+	
+	
+	
+	/*
+	$('#bookmark_submit').click(function(){
+		var variable_arr = new Array();
+		var time_arr = new Array();
+		
+		$("input[type='checkbox'].variable_list").each(function(index, element){
+			//var a = $("input[type='checkbox'].variable_list");
+			
+		    if(element.checked) {
+		    	
+				variable_arr.push(element.id);
+		    }
+		});
+		$("input[type='checkbox'].time_list").each(function(index, element){
+			if(element.checked) {
+				time_arr.push(element.id);
+			}
+		    
+		});
+		console.log('Sending variables ' + variable_arr);
+		console.log('Sending times ' + time_arr);
+		
+	});
+	*/
+	
+	
+});
+
+
+
+
+
+
+
+</script>
+
+{% endblock %}
+

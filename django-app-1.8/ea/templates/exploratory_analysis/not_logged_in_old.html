@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<style>
+#anchor_login_link {
+	cursor:pointer;
+}
+</style>
+
+<div class="container-fluid">
+	<div class="row-fluid">
+
+	</div>
+
+	<span id="heatmapview_username" style="display:none">{{username}}</span>
+
+	<div class="row-fluid">
+
+		<div class="col-md-12">
+			<div>User: {{username}} must <a id="anchor_login_link">login</a> before viewing page.</div>
+		</div>
+
+		<div class="col-md-10">
+
+			
+
+		</div>
+
+	</div>
+
+</div>
+
+
+<script src="{% static 'exploratory_analysis/js/jquery/jquery.tools.min.js' %}"></script>
+<script  type="text/javascript">
+$(document).ready(function() {
+
+	$('#anchor_login_link').click(function(){
+		location.href = "http://" + EA.host + ":" + EA.port + "/exploratory_analysis/login";
+	});
+
+});
+</script>
+
+<link rel="stylesheet" type="text/css" href="{% static 'exploratory_analysis/css/jquery/jquery-ui.css' %}" />
+
+{% endblock %}
+

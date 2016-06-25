@@ -1,3 +1,11 @@
+
+from paths import paths
+
+databases_name = paths.database_name
+staticfiles_dirs = paths.staticfiles_dirs
+template_dirs = paths.template_dirs
+message_reader_template_dirs = paths.message_reader_template_dirs
+
 # Django settings for uvcdat_live project.
 
 DEBUG = True
@@ -12,7 +20,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'uvcdat_live.db',                      # Or path to database file if using sqlite3.
+        'NAME': databases_name,                      # Or path to database file if using sqlite3.
         #'NAME': '/Users/8xo/uvcdat_live/uvcdat_live.db',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': '',
@@ -69,14 +77,7 @@ STATIC_ROOT = ''
 STATIC_URL = '/static/'
 
 # Additional locations of static files
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    "/Users/harris112/projects/acme-oui/diagnosticsviewer/django-app/uvcdat_live/static",
-    #"/Users/csg/Desktop/uvcdat-web/DiagnosticsViewer/django-app/uvcdat_live/exploratory_analysis/static/exploratory_analysis",
-    #"/Users/8xo/esgfWorkspace/UVCDAT_live/WebContent/uvcdat_live/exploratory_analysis/static/exploratory_analysis",
-)
+STATICFILES_DIRS = ( staticfiles_dirs, )
 
 # List of finder classes that know how to find static files in
 # various locations.
@@ -99,7 +100,7 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
@@ -115,8 +116,10 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    "/Users/harris112/projects/acme-oui/diagnosticsviewer/django-app/uvcdat_live/exploratory_analysis/templates/exploratory_analysis",
-    #"/Users/csg/Desktop/uvcdat-web/DiagnosticsViewer/django-app/uvcdat_live/exploratory_analysis/templates/exploratory_analysis",
+    #"/Users/csg/Desktop/uvcdat-web/DiagnosticsViewer/django-app/uvcdat_live/exploratory_analysis/templates/exploratory_analysis"
+    template_dirs,#"/Users/8xo/software/exploratory_analysis/DiagnosticsViewer/django-app/uvcdat_live/exploratory_analysis/templates/exploratory_analysis"
+    message_reader_template_dirs,
+
 )
 
 INSTALLED_APPS = (
@@ -127,10 +130,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
+    'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'exploratory_analysis',
+    'djcelery',
+    #'polls',
+    'message_reader',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -161,3 +167,10 @@ LOGGING = {
         },
     }
 }
+
+import djcelery
+djcelery.setup_loader()
+
+
+CELERY_IMPORTS = ("tasks", )
+

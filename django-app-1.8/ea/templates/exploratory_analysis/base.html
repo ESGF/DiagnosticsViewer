@@ -1,0 +1,151 @@
+{% load staticfiles %}
+
+<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+		<meta content="utf-8" http-equiv="encoding" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="" />
+		<meta name="author" content="" />
+
+		<link rel="shortcut icon" href="./ico/favicon.png" />
+
+		<title>UV-CDAT:EA Prototype</title>
+
+		<!-- Bootstrap core CSS -->
+		<link href="{% static 'exploratory_analysis/css/bootstrap/bootstrap.css' %}" rel="stylesheet" />
+		
+		<!-- Sticky-footer-navbar -->
+		<link href="{% static 'exploratory_analysis/css/sticky-footer-navbar.css' %}" rel="stylesheet" />
+		
+		<!-- Navbar-fixed-top -->
+		<link href="{% static 'exploratory_analysis/css/navbar-fixed-top.css' %}" rel="stylesheet" />
+		
+		<!-- Jquery 1.10.2 -->
+		<script src="{% static 'exploratory_analysis/js/jquery/jquery-1.10.2.min.js' %}"></script>
+		
+		<!-- Core.js - initialization of various params -->
+		<script src="{% static 'exploratory_analysis/js/core.js' %}"></script>
+
+		
+		
+	<style type="text/css">
+		.hiddentext {
+				display:none 
+			}
+	</style>
+
+	</head>
+
+	<body>
+	
+		
+		<div class="hiddentext">
+			<br>
+			Username: <span id="username_posted">{{username}}</span>
+		
+		</div>
+
+		<!-- Wrap all page content here -->
+		<div id="wrap">
+		
+			<!-- Fixed navbar -->
+			<div class="navbar navbar-inverse navbar-fixed-top">
+		
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="#">EA</a>
+					</div>
+					
+					<div class="collapse navbar-collapse">
+
+						<ul class="nav navbar-nav">
+					
+							{% if loggedIn == "True" %}
+							
+								<li>
+									<a href="#" id="classic_link">Classic</a>
+								</li>
+								<li>
+									<a href="#" id="logout_link">Logout</a>
+								</li> 
+							
+							{% else %}
+							
+								<li>
+									<a href="#" id="login_link">Login</a>
+								</li> 
+							
+							
+							{% endif %}
+					
+						</ul>
+						
+						<ul class="nav navbar-nav navbar-right">
+						
+							{% if loggedIn == "True" %}
+							
+							<li>
+								<!-- <a href="#" id="stamp">user: https://esg.ccs.ornl.gov/esgf-idp/openid/{{username}}</a>  -->
+								<a href="#" id="stamp">user: {{username}}</a>
+							</li>
+							
+							{% endif %}
+							
+						</ul>
+						
+					</div>
+					
+				</div>
+		
+			</div>
+			<!-- End Fixed navbar -->
+			
+			
+			<!-- <div id="content">  -->
+			{% block content %}{% endblock %}
+			<!-- </div>  -->
+			
+			
+		</div>
+		
+		
+		<script>
+		$(document).ready(function(){
+
+			var username = $('#username_posted').html();
+		
+			
+			$('#login_link').click(function(){
+				location.href = "http://" + EA.host + ":" + EA.port + "/exploratory_analysis/login";
+			});
+			
+			$('#logout_link').click(function(){
+				location.href = "http://" + EA.host + ":" + EA.port + "/exploratory_analysis/logout";
+			});
+			
+			$('#classic_link').click(function(){
+				location.href = 'http://' + EA.host + ':' + EA.port + '/exploratory_analysis/classic/' + username;
+			});
+			
+		});	
+		</script>
+		
+		
+		
+	</body>
+	
+	
+
+</html>
+
+
+
+

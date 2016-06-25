@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+
+
+{% load staticfiles %}
+	
+
+{% block content %}
+<style>
+
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font: 10px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+.thumbnail {
+    display:block;
+    padding:4px;
+    overflow:hidden;
+}
+
+.thumbnail{
+    width:225px;
+    height:225px;
+    overflow:hidden;
+    padding:4px;
+    display:block;
+}
+
+.thumbnail1 img {
+    display:block;
+    max-height:100%;
+    max-width:100%;
+    border:0;
+}
+
+
+svg {
+  overflow-x:visible;
+}
+
+
+.hiddentext {
+	display:none
+}
+
+.hiddenfunctionality {
+	display:none 
+}
+
+ul.dropdown-menu-form {
+    padding: 5px 10px 0;
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+#myModal1 {
+
+	margin-top: 150px
+}
+
+
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   speak for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+#modal1 {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;   
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading #modal1 {
+    display: block;
+}
+
+
+
+</style>
+
+<body>
+	<!-- overlay blocking user input while backend is crunching numbers -->
+	<div class="modal" id="modal1"></div>
+ 
+
+<div class="container-fluid">
+	
+
+	<span id="mapview_username" style="display:none">{{username}}</span>
+
+	<div class="row-fluid">
+
+		<div class="well col-md-2">
+			<div class="row-fluid">
+				<h2><font style="color:darkgrey">Geo</font></h2>
+			</div>
+			<hr>
+			
+			<div class="row-fluid">
+				<label for="selectD">Dataset:</label>
+				<br>
+				<select id="selectD" multiple="multiple"></select>
+				<br>
+			</div>
+			<br>
+			<div class="row-fluid">
+				<label for="selectV">Variable:</label>
+				<br>
+				<select id="selectV" multiple="multiple"></select>
+				<br>
+
+			</div>
+			<br>
+			<div class="row-fluid" id="viz_button">
+				<button type="button" class="btn btn-default" >
+					Submit
+				</button>
+			</div>
+			<hr>
+			<h4>Animate</h4>
+			<div class="row-fluid">
+				<div class="col-md-12">
+					<button type="button" class="btn btn-default" onclick="play_button()" style="display:null">
+						<span>Play</span>
+					</button>
+				
+					<button type="button" class="btn btn-default" onclick="stop_button()" style="display:null">
+						<span>Stop</span>
+					</button>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-10">
+
+
+
+			<div class="row-fluid">
+				<div class="col-md-12">
+					<div id="map-canvas" class="map-canvas-panel"></div>
+					<div id="map_plot_canvas1"></div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+</body>
+
+ 
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/variablelist.js' %}"></script>
+ 
+<!-- 
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/parameters.js' %}"></script>
+ --> 
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/timelist.js' %}"></script>
+
+<!-- 
+<script src="http://cdn.jquerytools.org/1.2.6/full/jquery.tools.min.js"></script>
+ -->
+<script src="{% static 'exploratory_analysis/js/jquery/jquery.tools.min.js' %}"></script>
+ 
+<!-- 
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" />
+ -->
+<link rel="stylesheet" type="text/css" href="{% static 'exploratory_analysis/css/jquery/jquery-ui.css' %}" />
+<!-- 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+  -->
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery-ui.min.js' %}"></script>
+
+
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/ui.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery.multiselect.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/jquery/jquery.multiselect.filter.js' %}"></script>
+<script src="{% static 'exploratory_analysis/js/d3/d3.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/datasets/selection.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/visualize.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/time.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/timeseries.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/map.js' %}"></script>
+<script type="text/javascript" src="{% static 'exploratory_analysis/js/geo/cyclone.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+
+	$body = $("body");
+	
+	/*
+	
+	
+	
+	var current_username = 'u1';
+	
+	getDatasets(current_username);
+	
+	getPackages(current_username);
+	
+	getVariables(current_username);
+	
+	getTimes(current_username);
+	*/
+	
+
+});
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,48 @@
+[paths]
+ea_hostname = localhost
+database_root = /Users/8xo/sqlite3/11-3
+data_root = /Users/8xo/djangoapp_data/
+ea_root = /Users/8xo/software/exploratory_analysis/DiagnosticsViewer
+uvcdat_root = /Users/8xo/uvcdatprojects/src/uvcdat7-22/build-uvcdat/
+metrics_root = /Users/8xo/software/exploratory_analysis/DiagnosticsGen/uvcmetrics/
+
+[data]
+dataset_names = tropics_warming_th_q
+
+[options]
+loggedIn = True
+esgfAccess = False
+esgfAuth = True
+img_prefix = '/Users/8xo/software/exploratory_analysis/DiagnosticsViewer/django-app/uvcdat_live/exploratory_analysis/'
+proxy_cert_dir = '/tmp'
+secret_key = "secret string"
+protectedPath = "/acme-data/"
+
+
+[paths]
+ea_root = '/Users/8xo/software/exploratory_analysis/DiagnosticsViewer'
+uvcdat_live_root = ea_root+ '/django-app-1.8/uvcdat_live/' 
+img_cache_path = uvcdat_live_root + '/exploratory_analysis/static/exploratory_analysis/cache/'
+staticfiles_dirs = uvcdat_live_root + "/exploratory_analysis/static/exploratory_analysis"
+
+
+[certificate]
+#proxy certificate directory root
+#the directory for the certs to be fetched
+proxy_cert_dir = '/tmp'
+
+#certNameSuffix - the suffix of the certificate file
+certNameSuffix = 'x509acme'
+
+
+[options]
+#esgfAuth - flag for turning on (True) or turning off (False) esgf authentication
+esgfAuth = False
+
+#naAuthReq - authentication via the cookie on (True) or off (False)
+authReq = True
+
+
+[namespaces]
+#namespace of embedded javascript functions in html
+javascript_namespace = 'EA_CLASSIC_VIEWER.functions.'
