@@ -35,10 +35,6 @@
   ```
   $ cd <cloned path>/acme-viewer/ea
   $ python manage.py migrate
-  $ python manage.py makemigrations Dataset_Access
-  $ python manage.py makemigrations Packages
-  $ python manage.py makemigrations Published
-  $ python manage.py makemigrations Variables
   ```
 
 6. (Optional) Start the classic viewer using the django web server (for apache server setup see 7)
