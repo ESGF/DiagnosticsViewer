@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from exploratory_analysis.models import UserKey
 from django.utils.crypto import constant_time_compare
+from django.utils.text import slugify
 import json
 import logging
 import traceback
@@ -13,8 +14,11 @@ import os
 import binascii
 import urllib
 import hmac
+from django.conf import settings
 import hashlib
+from exploratory_analysis.models import *
 
+config = settings.CONFIG
 logger = logging.getLogger('exploratory_analysis')
 logger.setLevel(logging.DEBUG)
 
@@ -37,9 +41,12 @@ def auth_and_validate(request):
     if request.user.is_authenticated():
         return request.user
     body = request.body
+    print request.META
     if "HTTP_X_USERID" not in request.META:
+        print "No userid"
         return False
     if "HTTP_X_SIGNATURE" not in request.META:
+        print "No signature"
         return False
     try:
         u = User.objects.get(id__exact=int(request.META["HTTP_X_USERID"]))
@@ -50,10 +57,13 @@ def auth_and_validate(request):
             raise ValueError("Invalid signature.")
         return u
     except User.DoesNotExist:
+        print "User not found"
         return False
     except UserKey.DoesNotExist:
+        print "Key not found"
         return False
     except ValueError as e:
+        print str(e)
         return False
 
 
@@ -71,6 +81,37 @@ class CredentialsView(View):
                 key = UserKey(user=user, key=pk)
                 key.save()
             return JsonResponse({"key": key.key, "id": user.id})
+
+
+class UploadView(View):
+    def post(self, request, dataset_name):
+        user = auth_and_validate(request)
+        if user is False:
+            return HttpResponse("Invalid credentials.", status="403")
+
+        whitelist = ["nc", "hdf5", "hdf4", "bin", "ascii", "text", "txt",
+                     "grib", "grb", "ctl", "xml", "pp", "dic", "jpg", "jpeg",
+                     "webp", "gif", "png", "apng", "tiff", "bmp", "ico", "svg",
+                     "pdf"]
+        try:
+            dataset = Dataset.objects.get(name=dataset_name, owner=user)
+        except Dataset.DoesNotExist:
+            dataset = Dataset(name=dataset_name, owner=user)
+            dataset.save()
+
+        path = dataset.path
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        for f in request.FILES:
+            fname, ext = os.path.splitext(f)
+            fpath = os.path.join(path, slugify(fname) + ext)
+            with open(fpath, "wb+") as upload:
+                for chunk in request.FILES[f].chunks():
+                    upload.write(chunk)
+
+        return HttpResponse("Success")
 
 
 class PublishedView(View):

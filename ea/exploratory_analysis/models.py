@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+import os
+import hashlib
 
 # Create your models here.
 
@@ -10,6 +12,21 @@ class UserKey(models.Model):
     """
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
     key = models.CharField(max_length=128, unique=True)
+
+
+class Dataset(models.Model):
+    """
+    Keeps track of relevant information about a dataset
+    """
+    owner = models.OneToOneField(settings.AUTH_USER_MODEL)
+    name = models.TextField()
+
+    @property
+    def path(self):
+        hasher = hashlib.sha256()
+        hasher.update(str(self.owner.id))
+        hasher.update(self.name)
+        return os.path.join(settings.CONFIG.get("paths", "dataPath"), hasher.hexdigest())
 
 
 # group_name -> dataset_list

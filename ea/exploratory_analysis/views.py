@@ -55,7 +55,6 @@ certNameSuffix = config.get("certificate","certNameSuffix")
 #ea_root = '/Users/8xo/software/exploratory_analysis/DiagnosticsViewer'
 root_dir = config.get('paths', 'root')
 ea_root = os.path.join(root_dir, config.get('paths', 'ea_dir'))
-print 'And found ea_root - ', ea_root
 
 img_cache_path = os.path.join(root_dir, config.get('paths', 'img_cache_path'))
 
@@ -63,7 +62,7 @@ staticfiles_dirs = os.path.join(root_dir, config.get('paths', 'staticfiles_dirs'
 
 javascript_namespace = config.get('namespaces','javascript_namespace')
 
-protected_path = config.get("paths", "protectedPath")
+data_path = config.get("paths", "dataPath")
 
 
 EA_hostname = config.get("options", "hostname")
@@ -259,17 +258,11 @@ def provenance(request):
     filename = request.GET.get('filename', '')
     dataset_name = request.GET.get('dataset_name','')
     package = request.GET.get('package','')
-
-#    print 'in provenance for filename ' + filename + ' and dataset_name ' + dataset_name + ' and package: ' + package
-
-#    print 'getting config'
-    path = config.get('paths', 'realPath')
-#    print 'Importing vcs'
+    path = config.get('paths', 'dataPath')
 
     import vcs
     fname = os.path.join(path, dataset_name, package, filename)
 #    print 'Looking for metadata in ', fname
-
 
     md = vcs.png_read_metadata(fname)
 #    print 'Found: (%s)' % md
@@ -283,7 +276,6 @@ def provenance(request):
       html += '</table>'
 
 #    print 'html: ', html
-
 
     return HttpResponse(html)
 

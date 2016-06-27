@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 
 from ea_services import views
 
-from ea_services.views import PackagesView, Dataset_AccessView, PublishedView, VariablesView, CredentialsView
+from ea_services.views import PackagesView, Dataset_AccessView, PublishedView, VariablesView, CredentialsView, UploadView
 
 urlpatterns = [
     #points to the main page view
@@ -12,4 +12,5 @@ urlpatterns = [
     url(r'^published/(?P<dataset_name>\w+)/$', PublishedView.as_view()),
     url(r'^variables/(?P<dataset_name>\w+)/$', VariablesView.as_view()),
     url(r'^credentials/(?P<username>\w+)/$', CredentialsView.as_view()),
+    url(r'^upload/(?P<dataset_name>\w+)/$', UploadView.as_view())
 ]
