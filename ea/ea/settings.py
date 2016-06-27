@@ -18,8 +18,7 @@ config = ConfigParser.ConfigParser()
 CFG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "eaconfig.cfg")
 config.read(CFG_PATH)
 
-print config.sections()
-
+CONFIG = config
 BASE_DIR = config.get('paths', 'root')
 os.chdir(BASE_DIR)
 

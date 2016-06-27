@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import View
 from django.template import RequestContext, loader
 from django.contrib.auth import authenticate, login
-
+from django.conf import settings
 from metrics.frontend import lmwgmaster
 #from metrics.frontend.lmwgmaster import *
 
@@ -32,12 +32,7 @@ fh.setFormatter(formatter)
 # add handler to logger object
 logger.addHandler(fh)
 
-import ConfigParser
-
-#print 'This one is looking for ./eaconfig.cfg'
-config = ConfigParser.ConfigParser()
-config.read('eaconfig.cfg')
-
+config = settings.CONFIG
 
 
 #various variables that need to go into a config file
@@ -49,12 +44,9 @@ esgfAuth = config.get("options", "esgfAuth")
 #proxy_cert_dir = '/tmp'
 proxy_cert_dir = config.get("certificate", "proxy_cert_dir")
 
-
 #naAuthReq - authentication via the cookie on (True) or off (False)
 #authReq = True
 authReq = config.get("options", "authReq")
-
-
 
 #certNameSuffix - the suffix of the certificate file
 #certNameSuffix = 'x509acme'
@@ -77,7 +69,7 @@ protected_path = config.get("paths", "protectedPath")
 EA_hostname = config.get("options", "hostname")
 EA_port = config.get("options", "port")
 
-# Main page.
+
 def index(request):
 
     template = loader.get_template('exploratory_analysis/index.html')
@@ -89,7 +81,6 @@ def index(request):
     return HttpResponse(template.render(context))
 
 
-#http://<host>/exploratory_analysis/login
 def login_page(request):
 
     template = loader.get_template('exploratory_analysis/login.html')
@@ -98,14 +89,10 @@ def login_page(request):
 
     })
 
-
     return HttpResponse(template.render(context))
 
+
 def logout_page(request):
-
-
-    print 'going to logout.html...'
-
     from django.contrib.auth import logout
     logout(request)
 
@@ -134,8 +121,6 @@ def auth_noesgf(request):
     if user is not None:
         login(request,user)
         return HttpResponse('Authenticated')
-
-
     else:
         return HttpResponse('Not Authenticated')
 
@@ -145,11 +130,7 @@ def config(request):
     sets = str(request.GET.get('set',None))
     dataset_name = str(request.GET.get('dataset_name',None))
 
-
-    #print '\n\n\n\n\t\thostname: ' + str(EA_hostname)
-
     config_params = dict( {'EA_hostname' : str(EA_hostname)} )
-    #c_params['EA_hostname'] = str(EA_hostname)
     config_params['EA_port'] = str(EA_port)
 
     data = config_params#{'config_params' : config_params}

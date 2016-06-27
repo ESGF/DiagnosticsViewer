@@ -20,8 +20,5 @@ os.environ.setdefault("UVCDAT_ANONYMOUS_LOG", "false")
 os.environ.setdefault("HOME", "/var/www")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ea.settings")
 
-print 'sys.path: ' + str(sys.path)
-
-
 application = get_wsgi_application()
 
