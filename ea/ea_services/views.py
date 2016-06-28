@@ -41,12 +41,9 @@ def auth_and_validate(request):
     if request.user.is_authenticated():
         return request.user
     body = request.body
-    print request.META
     if "HTTP_X_USERID" not in request.META:
-        print "No userid"
         return False
     if "HTTP_X_SIGNATURE" not in request.META:
-        print "No signature"
         return False
     try:
         u = User.objects.get(id__exact=int(request.META["HTTP_X_USERID"]))
@@ -57,13 +54,10 @@ def auth_and_validate(request):
             raise ValueError("Invalid signature.")
         return u
     except User.DoesNotExist:
-        print "User not found"
         return False
     except UserKey.DoesNotExist:
-        print "Key not found"
         return False
     except ValueError as e:
-        print str(e)
         return False
 
 
@@ -100,17 +94,16 @@ class UploadView(View):
             dataset.save()
 
         path = dataset.path
-
         if not os.path.exists(path):
             os.makedirs(path)
 
         for f in request.FILES:
             fname, ext = os.path.splitext(f)
+            fname = "--".join(fname.split(os.sep))
             fpath = os.path.join(path, slugify(fname) + ext)
             with open(fpath, "wb+") as upload:
                 for chunk in request.FILES[f].chunks():
                     upload.write(chunk)
-
         return HttpResponse("Success")
 
 

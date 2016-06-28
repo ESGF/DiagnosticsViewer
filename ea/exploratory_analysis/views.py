@@ -5,18 +5,25 @@ from django.template import RequestContext, loader
 from django.contrib.auth import authenticate, login
 from django.conf import settings
 from metrics.frontend import lmwgmaster
+from django.contrib.auth.decorators import login_required
+from django.utils.text import slugify
+from django.templatetags.static import static
 #from metrics.frontend.lmwgmaster import *
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 import amwg
 import lmwg
 
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
+from .models import Dataset
 
 import json
 import logging
 import traceback
 import os
+import shutil
+from output_viewer.page import Page
 
 from utils import isLoggedIn, generate_token_url
 
@@ -158,7 +165,81 @@ def main(request,user_id):
     return HttpResponse(template.render(context))
 
 
+@login_required
+def output(request, dataset, package):
+    try:
+        dataset = Dataset.objects.get(name=dataset, owner=request.user)
+        package_index = os.path.join(dataset.path, "%s-index.json" % package)
+        if os.path.exists(package_index):
+            # Should now rebuild the pages in case of updates
+            with open(package_index) as ind:
+                index = json.load(ind)
+            for spec in index["specification"]:
+                if "short_name" not in spec:
+                    spec["short_name"] = spec["title"].split()[0].lower()
+                # Hack the filename to have the package prefix
+                for group in spec["rows"]:
+                    for row in group:
+                        for col in row["columns"]:
+                            if isinstance(col, dict):
+                                if "path" in col:
+                                    p = col["path"]
+                                    fname, ext = os.path.splitext(p)
+                                    fname = os.path.join(package, fname)
+                                    fname = "--".join(fname.split(os.sep))
+                                    fpath = slugify(fname) + ext
+                                    col["path"] = fpath
 
+                p = Page(spec, root_path=dataset.path)
+                p.build(os.path.join(dataset.path, "%s-%s" % (package, spec["short_name"])))
+            template = loader.get_template("exploratory_analysis/output_index.html")
+            return HttpResponse(template.render({"spec": index, "package": package}))
+        else:
+            return HttpResponse("No package matching %s found." % package, status="404")
+    except Dataset.DoesNotExist:
+        return HttpResponse("No dataset matching %s found for user." % dataset, status="404")
+
+
+@login_required
+def output_file(request, dataset, package, path):
+    try:
+        dataset = Dataset.objects.get(name=dataset, owner=request.user)
+    except Dataset.DoesNotExist:
+        # Need to check if user is in group with access to dataset
+        return HttpResponse("No dataset matching %s found for user." % dataset, status="404")
+
+    package_index = os.path.join(dataset.path, "%s-index.json" % package)
+    if not os.path.exists(package_index):
+        return HttpResponse("No package %s found." % package, status="404")
+
+    if path.startswith("viewer"):
+        # Map to our scripts/css files
+        _, filename = os.path.split(path)
+        if filename.endswith("css"):
+            mime = "text/css"
+            if filename.startswith("bootstrap"):
+                f = open(staticfiles_storage.path("exploratory_analysis/css/bootstrap/bootstrap.css"))
+            elif filename.startswith("viewer"):
+                f = open(staticfiles_storage.path("exploratory_analysis/css/viewer.css"))
+        elif filename.endswith('js'):
+            mime = "text/javascript"
+            if filename.lower().startswith("jquery"):
+                f = open(staticfiles_storage.path('exploratory_analysis/js/jquery/jquery-1.10.2.min.js'))
+            elif filename.lower().startswith("viewer"):
+                f = open(staticfiles_storage.path('exploratory_analysis/js/viewer.js'))
+            elif filename.lower().startswith("bootstrap"):
+                f = open(staticfiles_storage.path('exploratory_analysis/js/bootstrap/bootstrap.min.js'))
+        return HttpResponse(f, content_type=mime)
+
+    if path.startswith("%s-" % package):
+        file_path = os.path.join(dataset.path, path)
+    else:
+        file_path = os.path.join(dataset.path, "%s-%s" % (package, path))
+
+    if not os.path.exists(file_path):
+        return HttpResponse("No file %s found in package." % file_path, status="404")
+
+    return HttpResponse(open(file_path))
 
 
 #classic view

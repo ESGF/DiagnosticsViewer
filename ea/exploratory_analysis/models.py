@@ -18,7 +18,7 @@ class Dataset(models.Model):
     """
     Keeps track of relevant information about a dataset
     """
-    owner = models.OneToOneField(settings.AUTH_USER_MODEL)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.TextField()
 
     @property

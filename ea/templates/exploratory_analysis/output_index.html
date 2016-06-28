@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+	<head> {% include "exploratory_analysis/head.html" %} </head>
+	<body>
+		<div class="container">
+		<div class="row">
+		<div class="col-sm-12">
+			<h2><a href="#" data-target="index">{{spec.title}} {{package|upper}}</a></h2>
+			<h3>{{spec.version}}</h3>
+			<ul class="nav nav-stacked">
+				{% for page in spec.specification %}
+					<li><a href="{{page.short_name}}/index.html">{{page.title}}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+		</div>
+		</div>
+	</body>
+</html>

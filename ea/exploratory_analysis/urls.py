@@ -35,6 +35,10 @@ urlpatterns = [
 
     # classic html block - specific set
     url(r'^classic_views_html/$', views.classic_views_html, name='classic_views_html'),
+
+    # output_viewer
+    url(r'^output/(?P<dataset>[^/]+)/(?P<package>[^/]+)/$', views.output, name="output"),
+    url(r'^output/(?P<dataset>[^/]+)/(?P<package>[^/]+)/(?P<path>.*)$', views.output_file, name="output_file"),
 ]
 
 

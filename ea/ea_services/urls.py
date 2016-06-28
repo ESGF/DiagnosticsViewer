@@ -12,5 +12,5 @@ urlpatterns = [
     url(r'^published/(?P<dataset_name>\w+)/$', PublishedView.as_view()),
     url(r'^variables/(?P<dataset_name>\w+)/$', VariablesView.as_view()),
     url(r'^credentials/(?P<username>\w+)/$', CredentialsView.as_view()),
-    url(r'^upload/(?P<dataset_name>\w+)/$', UploadView.as_view())
+    url(r'^upload/(?P<dataset_name>[A-Z0-9a-z\-]+)/$', UploadView.as_view())
 ]

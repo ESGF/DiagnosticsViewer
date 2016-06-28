@@ -22,8 +22,8 @@ CONFIG = config
 BASE_DIR = config.get('paths', 'root')
 os.chdir(BASE_DIR)
 
-DEBUG=config.get('options', 'debug')
-
+DEBUG = config.get('options', 'debug')
+STATIC_ROOT = config.get("paths", "static")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
