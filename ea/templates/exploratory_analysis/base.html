@@ -2,24 +2,24 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		{% include "head.html" %}
+		{% include "exploratory_analysis/head.html" %}
 	</head>
 
 	<body>
-	
-		
+
+
 		<div class="hiddentext">
 			<br>
 			Username: <span id="username_posted">{{username}}</span>
-		
+
 		</div>
 
 		<!-- Wrap all page content here -->
 		<div id="wrap">
-		
+
 			<!-- Fixed navbar -->
 			<div class="navbar navbar-inverse navbar-fixed-top">
-		
+
 				<div class="container-fluid">
 					<div class="navbar-header">
 						<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -29,86 +29,86 @@
 						</button>
 						<a class="navbar-brand" href="#">EA</a>
 					</div>
-					
+
 					<div class="collapse navbar-collapse">
 
 						<ul class="nav navbar-nav">
-					
+
 							{% if loggedIn == "True" %}
-							
+
 								<li>
 									<a href="#" id="classic_link">Classic</a>
 								</li>
 								<li>
 									<a href="#" id="logout_link">Logout</a>
-								</li> 
-							
+								</li>
+
 							{% else %}
-							
+
 								<li>
 									<a href="#" id="login_link">Login</a>
-								</li> 
-							
-							
+								</li>
+
+
 							{% endif %}
-					
+
 						</ul>
-						
+
 						<ul class="nav navbar-nav navbar-right">
-						
+
 							{% if loggedIn == "True" %}
-							
+
 							<li>
 								<!-- <a href="#" id="stamp">user: https://esg.ccs.ornl.gov/esgf-idp/openid/{{username}}</a>  -->
 								<a href="#" id="stamp">user: {{username}}</a>
 							</li>
-							
+
 							{% endif %}
-							
+
 						</ul>
-						
+
 					</div>
-					
+
 				</div>
-		
+
 			</div>
 			<!-- End Fixed navbar -->
-			
-			
+
+
 			<!-- <div id="content">  -->
 			{% block content %}{% endblock %}
 			<!-- </div>  -->
-			
-			
+
+
 		</div>
-		
-		
+
+
 		<script>
 		$(document).ready(function(){
 
 			var username = $('#username_posted').html();
-		
-			
+
+
 			$('#login_link').click(function(){
 				location.href = "http://" + EA.host + ":" + EA.port + "/exploratory_analysis/login";
 			});
-			
+
 			$('#logout_link').click(function(){
 				location.href = "http://" + EA.host + ":" + EA.port + "/exploratory_analysis/logout";
 			});
-			
+
 			$('#classic_link').click(function(){
 				location.href = 'http://' + EA.host + ':' + EA.port + '/exploratory_analysis/classic/' + username;
 			});
-			
-		});	
+
+		});
 		</script>
-		
-		
-		
+
+
+
 	</body>
-	
-	
+
+
 
 </html>
 

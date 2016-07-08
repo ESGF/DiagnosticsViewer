@@ -39,6 +39,7 @@ urlpatterns = [
     # output_viewer
     url(r'^output/(?P<dataset>[^/]+)/(?P<package>[^/]+)/$', views.output, name="output"),
     url(r'^output/(?P<dataset>[^/]+)/(?P<package>[^/]+)/(?P<path>.*)$', views.output_file, name="output_file"),
+    url(r'^browse/', views.browse_datasets, name="browse_datasets"),
 ]
 
 

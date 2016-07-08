@@ -1,0 +1,78 @@
+{% extends "exploratory_analysis/base.html" %}
+
+{% block content %}
+
+<style>
+iframe {
+	width:100%;
+	height:600px;
+	border:none;
+}
+</style>
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm-4">
+			<h1>Browse Datasets</h1>
+		</div>
+		<div class="col-sm-8">
+			<form>
+				<div class="form-group">
+					<label for="dataset">Dataset</label>
+					<select id="dataset">
+						{% for ds in datasets %}
+						<option value="{{ds.name}}">{{ds.proper_name}}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="package">Package</label>
+					<select disabled id="package">
+					</select>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-4">
+		<iframe id="index"></iframe>
+		</div>
+		<div class="col-sm-8">
+		<iframe id="detail"></iframe>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function set_index(dataset, package) {
+		$("#index").attr("src", "/exploratory_analysis/output/" + dataset + "/" + package).load(function(){
+			this.contentWindow.steal_links(index_link);
+		});
+	}
+
+	function index_link(target) {
+		$("#detail").attr("src", target);
+	}
+
+	$("body").ready(function(){
+		$("#dataset").change(function() {
+			var dataset = $(this).val();
+			$.get("/ea_services/dataset_packages/" + dataset, function(data){
+				var pkg = $("#package").removeAttr('disabled');
+				var first = data[0];
+				data.map(function(d){
+					pkg.append($("<option value='" + d + "'>" + d + "</option>"));
+				});
+
+				set_index(dataset, first);
+			});
+		});
+		$("#package").change(function() {
+			var dataset = $("#dataset").val(), package=$("#package").val();
+			console.log(dataset, package);
+			set_index(dataset, package);
+		});
+	});
+</script>
+
+{% endblock %}

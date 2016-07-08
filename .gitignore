@@ -42,6 +42,7 @@ local
 local_settings.py
 
 /env/
+/venv
 /fonts/
 /images/
 /js/

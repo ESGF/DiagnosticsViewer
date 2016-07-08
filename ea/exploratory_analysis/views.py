@@ -242,6 +242,12 @@ def output_file(request, dataset, package, path):
     return HttpResponse(open(file_path))
 
 
+@login_required
+def browse_datasets(request):
+    datasets = request.user.dataset_set.all()
+    template = loader.get_template("exploratory_analysis/browse.html")
+    return HttpResponse(template.render({"datasets": datasets}))
+
 #classic view
 #url(r'^classic/(?P<user_id>\w+)/$',views.classic,name='classic'),
 def classic(request,user_id):

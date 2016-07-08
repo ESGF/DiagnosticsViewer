@@ -12,3 +12,10 @@ $("body").ready(function(){
 		"html": true
 	});
 });
+
+function steal_links(callback) {
+	$("a").click(function(ev){
+		callback($(this).attr("href"));
+		ev.preventDefault();
+	});
+}

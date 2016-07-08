@@ -15,5 +15,13 @@
 		</div>
 		</div>
 		</div>
+		<script>
+		function steal_links(callback) {
+			$("a").click(function(ev){
+				callback(this.href);
+				ev.preventDefault();
+			});
+		}
+		</script>
 	</body>
 </html>

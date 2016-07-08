@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 import os
 import hashlib
+import json
 
 # Create your models here.
 
@@ -28,6 +29,23 @@ class Dataset(models.Model):
         hasher.update(self.name)
         return os.path.join(settings.CONFIG.get("paths", "dataPath"), hasher.hexdigest())
 
+    @property
+    def proper_name(self):
+        if os.path.exists(self.path):
+            for f in os.listdir(self.path):
+                if f.endswith("index.json"):
+                    with open(os.path.join(self.path, f)) as index:
+                        spec = json.load(index)
+                    return spec["version"]
+        return ""
+
+    @property
+    def packages(self):
+        indices = []
+        for f in os.listdir(self.path):
+            if f.endswith("index.json") and f[-11] == "-":
+                indices.append(f[:-11])
+        return indices
 
 # group_name -> dataset_list
 # Example:

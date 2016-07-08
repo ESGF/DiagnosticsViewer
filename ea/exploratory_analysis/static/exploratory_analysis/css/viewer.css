@@ -35,3 +35,7 @@
 .img_title {
 	text-align:center;
 }
+
+body {
+	padding-top:0;
+}
