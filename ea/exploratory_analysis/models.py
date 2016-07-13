@@ -7,6 +7,15 @@ import json
 # Create your models here.
 
 
+class UserGroup(models.Model):
+    """
+    Used to make datasets available to other users
+    """
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    name = models.TextField()
+    datasets = models.ManyToManyField("Dataset")
+
+
 class UserKey(models.Model):
     """
     Used to sign API calls for a user.

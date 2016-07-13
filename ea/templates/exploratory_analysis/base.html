@@ -27,26 +27,26 @@
 							<span class="icon-bar"></span>
 							<span class="icon-bar"></span>
 						</button>
-						<a class="navbar-brand" href="#">EA</a>
+						<a class="navbar-brand" href="/">DiagnosticsViewer</a>
 					</div>
 
 					<div class="collapse navbar-collapse">
 
 						<ul class="nav navbar-nav">
 
-							{% if loggedIn == "True" %}
+							{% if request.user.is_authenticated %}
 
 								<li>
-									<a href="#" id="classic_link">Classic</a>
+									<a href="{% url 'browse_datasets' %}" id="classic_link">Browse</a>
 								</li>
 								<li>
-									<a href="#" id="logout_link">Logout</a>
+									<a href="{% url 'logout_page' %}" id="logout_link">Logout</a>
 								</li>
 
 							{% else %}
 
 								<li>
-									<a href="#" id="login_link">Login</a>
+									<a href="{% url 'login_page' %}" id="login_link">Login</a>
 								</li>
 
 
@@ -56,11 +56,10 @@
 
 						<ul class="nav navbar-nav navbar-right">
 
-							{% if loggedIn == "True" %}
+							{% if request.user.is_authenticated %}
 
 							<li>
-								<!-- <a href="#" id="stamp">user: https://esg.ccs.ornl.gov/esgf-idp/openid/{{username}}</a>  -->
-								<a href="#" id="stamp">user: {{username}}</a>
+								<a href="#" id="stamp">user: {{user.username}}</a>
 							</li>
 
 							{% endif %}

@@ -25,6 +25,8 @@ os.chdir(BASE_DIR)
 DEBUG = config.get('options', 'debug')
 STATIC_ROOT = config.get("paths", "static")
 
+LOGIN_URL = "/login"
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 

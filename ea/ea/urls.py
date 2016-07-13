@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+import exploratory_analysis.views
 
 urlpatterns = [
-    url(r'^exploratory_analysis/', include('exploratory_analysis.urls')),
     url(r'^ea_services/', include('ea_services.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include("exploratory_analysis.urls")),
 ]
