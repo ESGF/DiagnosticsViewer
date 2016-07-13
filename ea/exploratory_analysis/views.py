@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.generic import View
 from django.template import RequestContext, loader
+import json
 from django.contrib.auth import authenticate, login
 from django.conf import settings
 from metrics.frontend import lmwgmaster
@@ -13,7 +14,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
-from .models import Dataset
+from .models import Dataset, UserGroup
 
 import json
 import logging
@@ -111,6 +112,67 @@ def output(request, dataset, package):
             return HttpResponse("No package matching %s found." % package, status="404")
     except Dataset.DoesNotExist:
         return HttpResponse("No dataset matching %s found for user." % dataset, status="404")
+
+
+@login_required
+def view_group_memberships(request):
+    rc = RequestContext(request, {})
+    template = loader.get_template("exploratory_analysis/groups.html")
+    return HttpResponse(template.render(rc))
+
+
+@login_required
+def invite_to_group(request, group_id):
+    return HttpResponse("thumbs up")
+
+
+@login_required
+def leave_group(request, group_id):
+    return HttpResponse("thumbs up")
+
+
+@login_required
+def create_group(request):
+    if request.method != "POST":
+        r = HttpResponse()
+        r.status_code = 405
+        return r
+    expects = request.META.get("HTTP_EXPECT", "text/html")
+
+    r = HttpResponse()
+    if expects.lower() == "application/json":
+        # it's an ajax call
+        data = json.loads(request.body)
+        r.content_type = "application/json"
+    else:
+        # it's a page request
+        data = request.POST
+
+    if "name" not in data:
+        r.status_code = 400
+        reason = "name attribute not provided."
+
+    try:
+        group = UserGroup.objects.get(name=data["name"])
+    except UserGroup.DoesNotExist:
+        group = UserGroup(name=data["name"], owner=request.user)
+        group.save()
+    else:
+        r.status_code = 400
+        reason = "Group already exists"
+
+    if r.status_code != 200:
+        if expects.lower() == "application/json":
+            r.body = json.dumps({"reason": reason})
+        else:
+            r.body = reason
+    else:
+        if expects.lower() == "application/json":
+            r.body = json.dumps({"id": group.id, "name": group.name})
+        else:
+            return redirect(view_group_memberships)
+
+    return r
 
 
 @login_required

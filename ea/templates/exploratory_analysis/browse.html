@@ -18,7 +18,7 @@ iframe {
 		<div class="col-sm-8">
 			<form>
 				<div class="form-group">
-					<label for="dataset">Dataset</label>
+					<label for="dataset"></label>
 					<select id="dataset">
 						{% for ds in datasets %}
 						<option value="{{ds.name}}">{{ds.proper_name}}</option>
@@ -35,10 +35,10 @@ iframe {
 	</div>
 	<div class="row">
 		<div class="col-sm-4">
-		<iframe id="index"></iframe>
+			<iframe id="index"></iframe>
 		</div>
 		<div class="col-sm-8">
-		<iframe id="detail"></iframe>
+			<iframe id="detail"></iframe>
 		</div>
 	</div>
 </div>

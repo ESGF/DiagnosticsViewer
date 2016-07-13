@@ -1,0 +1,67 @@
+{% extends "exploratory_analysis/base.html" %}
+
+{% block content %}
+
+<style>
+
+</style>
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm-12">
+			<h1>Manage Groups</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="form-group">
+				<label for="search">Find group: </label>
+				<input type="search" class="form-control" name="search_groups"/>
+			</div>
+			<form data-autojax='true' action="{% url 'create-group' %}" method='POST'>
+				<div class="form-group">
+					<label for="search">Create group: </label>
+					<div class="input-group">
+						<input type="text" class="form-control" name="name"/>
+						<span class="input-group-btn">
+							<button class="btn btn-default" type="submit">Create</button>
+						</span>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="group-wrapper">
+				<h1>Groups you Own</h1>
+				<table class="group-table table">
+					{% for group in user.owned_groups.all %}
+					<tr>
+						<td>{{ group.name }}</td>
+						<td><a href="{% url 'invite-to-group' group.id %}">Invite</a></td>
+					</tr>
+					{% endfor %}
+				</table>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="group-wrapper">
+				<h1>Groups you're in</h1>
+				<table class="group-table table">
+					{% for group in user.group_memberships.all %}
+					<tr>
+						<td>{{ group.name }}</td>
+						<td><a href="{% url 'leave-group' group.id %}">Leave Group</a></td>
+					</tr>
+					{% endfor %}
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+</script>
+
+{% endblock %}

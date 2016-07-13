@@ -1,10 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Dataset_Access, Packages, Published, Variables, Dataset
+from .models import Dataset, UserGroup, UserKey
 
-admin.site.register(Dataset_Access)
-admin.site.register(Packages)
-admin.site.register(Published)
-admin.site.register(Variables)
 admin.site.register(Dataset)
+admin.site.register(UserGroup)
+admin.site.register(UserKey)
