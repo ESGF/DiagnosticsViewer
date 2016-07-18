@@ -71,13 +71,15 @@
 				</div>
 
 			</div>
-			<!-- End Fixed navbar -->
+			<div class="container">
+			{% if messages %}
+			    {% for message in messages %}
+			    <div{% if message.tags %} class="alert {{ message.tags }}"{% endif %} role="alert">{{ message }}</div>
+			    {% endfor %}
+			{% endif %}
 
-
-			<!-- <div id="content">  -->
 			{% block content %}{% endblock %}
-			<!-- </div>  -->
-
+			</div>
 
 		</div>
 

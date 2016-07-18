@@ -9,6 +9,7 @@ from metrics.frontend import lmwgmaster
 from django.contrib.auth.decorators import login_required
 from django.utils.text import slugify
 from django.templatetags.static import static
+from django.contrib import messages
 #from metrics.frontend.lmwgmaster import *
 from django.contrib.staticfiles.storage import staticfiles_storage
 
@@ -67,16 +68,9 @@ def login_page(request):
 def logout_page(request):
     from django.contrib.auth import logout
     logout(request)
+    messages.success(request, 'Logged Out')
 
-    template = loader.get_template('exploratory_analysis/logout.html')
-
-    loggedIn = False
-
-    context = RequestContext(request, {
-        'loggedIn' : str(loggedIn)
-    })
-
-    return HttpResponse(template.render(context))
+    return redirect("login_page")
 
 
 @login_required
