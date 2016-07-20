@@ -27,7 +27,7 @@ from output_viewer.page import Page
 from utils import isLoggedIn, generate_token_url
 
 logger = logging.getLogger('exploratory_analysis')
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARNING)
 
 fh = logging.FileHandler('exploratory_analysis.log')
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -39,28 +39,25 @@ logger.addHandler(fh)
 config = settings.CONFIG
 
 
-def index(request):
-
-    template = loader.get_template('exploratory_analysis/index.html')
-    user = request.user
+def auth(request):
     if request.user.is_authenticated():
-        username = user.username
-    else:
-        username = ''
+        redirect("index")
 
-    context = RequestContext(request, {
-        'username': username,
-    })
+    if request.method == "POST":
+        user = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(username=user, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return redirect('index')
 
-    return HttpResponse(template.render(context))
+    return redirect("login")
 
 
 def login_page(request):
-
     template = loader.get_template('exploratory_analysis/login.html')
-
     context = RequestContext(request, {})
-
     return HttpResponse(template.render(context))
 
 
@@ -116,8 +113,23 @@ def view_group_memberships(request):
 
 
 @login_required
-def invite_to_group(request, group_id):
-    return HttpResponse("thumbs up")
+def manage_group(request, group_id):
+    try:
+        error = None
+        group = UserGroup.objects.get(id=group_id)
+        if request.user.id != group.owner.id:
+            error = "You don't own that group."
+    except UserGroup.DoesNotExist:
+        error = "No group found."
+
+    if error is not None:
+        messages.error(request, error)
+        return redirect("view-groups")
+
+    vals = {"group": group}
+    rc = RequestContext(request, vals)
+    template = loader.get_template("exploratory_analysis/group_page.html")
+    return HttpResponse(template.render(rc))
 
 
 @login_required
@@ -144,7 +156,7 @@ def create_group(request):
 
     if "name" not in data:
         r.status_code = 400
-        reason = "name attribute not provided."
+        reason = "No name provided for group."
 
     try:
         group = UserGroup.objects.get(name=data["name"])
@@ -153,17 +165,19 @@ def create_group(request):
         group.save()
     else:
         r.status_code = 400
-        reason = "Group already exists"
+        reason = "Group '%s' already exists." % data["name"]
 
     if r.status_code != 200:
         if expects.lower() == "application/json":
             r.body = json.dumps({"reason": reason})
         else:
-            r.body = reason
+            messages.error(request, reason)
+            return redirect(view_group_memberships)
     else:
         if expects.lower() == "application/json":
             r.body = json.dumps({"id": group.id, "name": group.name})
         else:
+            messages.error(reason)
             return redirect(view_group_memberships)
 
     return r
@@ -217,19 +231,3 @@ def browse_datasets(request):
     template = loader.get_template("exploratory_analysis/browse.html")
     rc = RequestContext(request, {"datasets": datasets})
     return HttpResponse(template.render(rc))
-
-
-def auth(request):
-    if request.user.is_authenticated():
-        redirect("index")
-
-    if request.method == "POST":
-        user = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(username=user, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return redirect('index')
-
-    return redirect("login")

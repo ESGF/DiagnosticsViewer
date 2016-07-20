@@ -16,6 +16,7 @@ import urllib
 import hmac
 from django.conf import settings
 import hashlib
+from django.forms.models import model_to_dict
 from exploratory_analysis.models import *
 
 config = settings.CONFIG
@@ -59,6 +60,62 @@ def auth_and_validate(request):
         return False
     except ValueError as e:
         return False
+
+
+def search_users(request):
+    user = auth_and_validate(request)
+    if user is False:
+        return HttpResponse("Invalid credentials.", status="403")
+
+    term = request.GET.get("search", None)
+    if term is None:
+        return HttpResponse("No search term provided.", status="400")
+
+    if term is not None:
+        words = term.split()
+    else:
+        words = []
+
+    users = User.objects.all()
+    user_scores = []
+
+    for u in users:
+        u_strings = [u.username, u.email, u.last_name, u.first_name]
+        # Compute string similarity
+        scores = []
+        for s in u_strings:
+            if not s:
+                scores.append([len(word) * 10])
+                continue
+            word_scores = []
+            for word in words:
+                substring_scores = []
+                for substring in [s[i:i+len(word)] for i in range(max(len(s) - len(word), 1))]:
+                    score = 0
+                    for i, c in enumerate(substring):
+                        if c != word[i]:
+                            score += 10
+                    substring_scores.append(score)
+                score = min(substring_scores)
+                word_scores.append(score)
+            scores.append(word_scores)
+        user_scores.append((scores, u))
+
+    # Sort the users
+    sorted_users = sorted(user_scores, key=lambda x: x[0])
+    vals = {}
+    users = []
+    for u in sorted_users:
+        u = u[1]
+        users.append({
+            "first_name": u.first_name,
+            "last_name": u.last_name,
+            "username": u.username,
+            "email": u.email,
+            "id": u.id
+        })
+    vals["users"] = users
+    return JsonResponse(vals)
 
 
 class CredentialsView(View):

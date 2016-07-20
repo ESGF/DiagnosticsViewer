@@ -1,0 +1,78 @@
+{% extends "exploratory_analysis/base.html" %}
+
+{% block content %}
+
+<style></style>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<h1>Group {{ group.name }}</h1>
+			<h4>Owned by {{ group.owner.username }}</h4>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-4">
+			<ul>
+			{% for u in group.members.all %}
+				<li class="user">
+					{{ u.username }}
+				</li>
+			{% endfor %}
+			</ul>
+		</div>
+		<div class="col-sm-8">
+			<div class="container">
+				<div class="row">
+					<div class="input-group">
+						<input id="searchfield" type="text" class="form-control" placeholder="Username, email address, first name, last name..."/>
+						<span class="input-group-btn">
+							<button class="btn btn-default" id="search_btn">Search for User</button>
+						</span>
+					</div>
+				</div>
+				<div class="row">
+					<ul>
+					{% if results %}
+						{% for r in results %}
+						<li class="user">{{ r.username }}</li>
+						{% endfor %}
+					{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script type="text/javascript">
+
+(function () {
+	// using jQuery
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+
+	var csrftoken = getCookie('csrftoken');
+	var searchfield = $("#searchfield");
+	var search_button = $("#search_btn");
+	search_button.click(function() {
+		$.get("{% url 'user-search' %}", searchfield.val(), function(data) {
+			
+		});
+	});
+})();
+
+</script>
+
+{% endblock %}

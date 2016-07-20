@@ -39,7 +39,7 @@
 					{% for group in user.owned_groups.all %}
 					<tr>
 						<td>{{ group.name }}</td>
-						<td><a href="{% url 'invite-to-group' group.id %}">Invite</a></td>
+						<td><a href="{% url 'manage-group' group.id %}">Manage</a></td>
 					</tr>
 					{% endfor %}
 				</table>
