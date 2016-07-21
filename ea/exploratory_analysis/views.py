@@ -191,7 +191,6 @@ def create_group(request):
         data = request.POST
 
     if "name" not in data:
-        print "no name provided"
         r.status_code = 400
         reason = "No name provided for group."
 
@@ -201,7 +200,6 @@ def create_group(request):
         group = UserGroup(name=data["name"], owner=request.user)
         group.save()
     else:
-        print "group exists"
         r.status_code = 400
         reason = "Group '%s' already exists." % data["name"]
 
