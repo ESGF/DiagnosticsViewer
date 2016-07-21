@@ -31,7 +31,7 @@ LOGIN_URL = "/login"
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0q)#6%s9!8+onlj897rkl5ii)=&*wzlep8w!fu2&$mm8-j5#!='
+SECRET_KEY = config.get("options", "secret_key")
 
 ALLOWED_HOSTS = []
 
@@ -85,15 +85,23 @@ WSGI_APPLICATION = 'ea.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-db_name = config.get("paths", "database")
-print "Looking for database at ", os.path.join(BASE_DIR, db_name)
-db_path = os.path.join(BASE_DIR, db_name)
+db = {
+    "ENGINE": '',
+    "NAME": '',
+    "HOST": '',
+}
+
+db_conf = config.items("database")
+
+if "engine" in db_conf:
+    db["ENGINE"] = config.get("database", "engine")
+if "host" in db_conf:
+    db["HOST"] = config.get("database", "host")
+if "name" in db_conf:
+    db["NAME"] = config.get('database', 'name')
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': db_path,
-    }
+    'default': db
 }
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
@@ -124,8 +132,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-
-
 
 import logging
 
