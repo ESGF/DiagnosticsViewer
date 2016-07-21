@@ -4,7 +4,7 @@ from exploratory_analysis import views
 urlpatterns = [
 
     # Index page
-    url(r'^$', views.browse_datasets, name='browse_datasets'),
+    url(r'^$', views.browse_datasets, name='browse-datasets'),
 
     # Authentication views
     url(r'^login/$', views.login_page, name='login-page'),
@@ -14,7 +14,6 @@ urlpatterns = [
     # Group views
     url(r'^group/membership/$', views.view_group_memberships, name="view-groups"),
     url(r'^group/(?P<group_id>\d+)/manage/$', views.manage_group, name="manage-group"),
-    url(r'^group/(?P<group_id>\d+)/leave/$', views.leave_group, name="leave-group"),
     url(r'^group/create/$', views.create_group, name="create-group"),
 
     # output_viewer

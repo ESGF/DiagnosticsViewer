@@ -52,7 +52,7 @@
 					{% for group in user.group_memberships.all %}
 					<tr>
 						<td>{{ group.name }}</td>
-						<td><a href="{% url 'leave-group' group.id %}">Leave Group</a></td>
+						<td><button class="btn btn-warning leave" data-leave-url="{% url 'remove-user-from-group' group.id %}">Leave Group</button></td>
 					</tr>
 					{% endfor %}
 				</table>
@@ -61,6 +61,16 @@
 	</div>
 
 <script type="text/javascript">
+$(".leave").click(function(){
+	var el = $(this);
+	var url = el.attr("data-leave-url");
+	$.post(url, {"user": "{{ user.id }}"}, function(){
+		var row = el.parent().parent();
+		row.fadeOut(function(){
+			row.detach();
+		});
+	});
+});
 </script>
 
 {% endblock %}

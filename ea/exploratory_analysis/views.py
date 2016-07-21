@@ -41,7 +41,7 @@ config = settings.CONFIG
 
 def auth(request):
     if request.user.is_authenticated():
-        redirect("index")
+        redirect("browse-datasets")
 
     if request.method == "POST":
         user = request.POST["username"]
@@ -50,9 +50,9 @@ def auth(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return redirect('index')
+                return redirect('browse-datasets')
 
-    return redirect("login")
+    return redirect("login-page")
 
 
 def login_page(request):
@@ -67,7 +67,7 @@ def logout_page(request):
     logout(request)
     messages.success(request, 'Logged Out')
 
-    return redirect("login_page")
+    return redirect("login-page")
 
 
 @login_required
@@ -130,11 +130,6 @@ def manage_group(request, group_id):
     rc = RequestContext(request, vals)
     template = loader.get_template("exploratory_analysis/group_page.html")
     return HttpResponse(template.render(rc))
-
-
-@login_required
-def leave_group(request, group_id):
-    return HttpResponse("thumbs up")
 
 
 @login_required

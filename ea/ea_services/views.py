@@ -75,13 +75,14 @@ def remove_user_from_group(request, gid):
     uid = request.POST.get("user", None)
     if uid is None:
         return JsonResponse({"error": "No user provided."}, status="400")
+    uid = int(uid)
 
     try:
         g = UserGroup.objects.get(id=gid)
     except UserGroup.DoesNotExist:
         return JsonResponse({"error": "No such group."}, status="400")
 
-    if g.owner.id != user.id:
+    if g.owner.id != user.id and user.id != uid:
         return JsonResponse({"error": "You don't own this group."}, status="403")
 
     try:
