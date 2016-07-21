@@ -2,7 +2,16 @@
 
 {% block content %}
 
-<style></style>
+<style>
+	.user {
+		list-style-type:none;
+		padding-top:.5em;
+		padding-bottom:.5em;
+	}
+	#results {
+		margin-top:1em;
+	}
+</style>
 
 	<div class="row">
 		<div class="col-sm-12">
@@ -12,10 +21,12 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-4">
-			<ul>
+			<ul id="members">
 			{% for u in group.members.all %}
 				<li class="user">
-					{{ u.username }}
+					<p class="username">{{ u.username }}</p>
+					<p class="email">{{ u.email }}</p>
+					<button class="btn btn-danger remove_button" data-uid="{{ u.id }}">Remove from group</button>
 				</li>
 			{% endfor %}
 			</ul>
@@ -31,12 +42,8 @@
 					</div>
 				</div>
 				<div class="row">
-					<ul>
-					{% if results %}
-						{% for r in results %}
-						<li class="user">{{ r.username }}</li>
-						{% endfor %}
-					{% endif %}
+					<ul id="results">
+						<li class="user">Search for users</li>
 					</ul>
 				</div>
 			</div>
@@ -46,31 +53,61 @@
 <script type="text/javascript">
 
 (function () {
-	// using jQuery
-	function getCookie(name) {
-		var cookieValue = null;
-		if (document.cookie && document.cookie !== '') {
-			var cookies = document.cookie.split(';');
-			for (var i = 0; i < cookies.length; i++) {
-				var cookie = jQuery.trim(cookies[i]);
-				// Does this cookie string begin with the name we want?
-				if (cookie.substring(0, name.length + 1) === (name + '=')) {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
-				}
-			}
-		}
-		return cookieValue;
-	}
-
-	var csrftoken = getCookie('csrftoken');
+	var add_url = "{% url 'add-user-to-group' group.id %}";
+	var remove_url = "{% url 'remove-user-from-group' group.id %}";
 	var searchfield = $("#searchfield");
 	var search_button = $("#search_btn");
 	search_button.click(function() {
-		$.get("{% url 'user-search' %}", searchfield.val(), function(data) {
-			
+		$.get("{% url 'user-search' %}", {"term": searchfield.val()}, function(data) {
+			$("#results").empty();
+			data["users"].map(function(d){
+				var el = build_search_result(d);
+				$("#results").append(el);
+			});
+			if (data['users'].length === 0) {
+				$("#results").append($(document.createElement("li").addClass('user').text("No results.")));
+			}
 		});
 	});
+
+	function build_search_result(user) {
+		var li = $(document.createElement('li')).addClass("user");
+		var username = $(document.createElement("p")).addClass("username").text(user.username);
+		var email = $(document.createElement("p")).addClass("email").text(user.email);
+		var invite = $(document.createElement("button")).addClass("btn")
+														.addClass("btn-primary")
+														.addClass("add_button")
+														.text("Invite")
+														.attr("data-uid", user.id)
+														.click(add_action);
+		li.append(username);
+		li.append(email);
+		li.append(invite);
+		return li;
+	}
+
+	function remove_action() {
+		var el = $(this);
+		var uid = el.attr("data-uid");
+		$.post(remove_url, {"user": uid}, function(d){
+			el.parent().detach();
+		});
+	}
+
+	function add_action() {
+		var el = $(this);
+		var uid = el.attr("data-uid");
+		$.post(add_url, {"user": uid}, function(d) {
+			var li = el.parent().clone();
+			el = li.find(".add_button");
+			el.detach();
+			var remove_button = $(document.createElement("button")).addClass("remove_button").addClass("btn").addClass("btn-danger").click(remove_action).text("Remove from group").attr("data-uid", uid);
+			li.append(remove_button);
+			$("#members").append(li);
+		});
+	}
+	// Prep the remove buttons alreadyo n the screen
+	$(".remove_button").click(remove_action);
 })();
 
 </script>

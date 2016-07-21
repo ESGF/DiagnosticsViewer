@@ -62,19 +62,102 @@ def auth_and_validate(request):
         return False
 
 
+def remove_user_from_group(request, gid):
+    if request.method != "POST":
+        h = HttpResponse(status="405")
+        h["Allow"] = "POST"
+        return h
+
+    user = auth_and_validate(request)
+    if user is False:
+        return JsonResponse({"error": "Invalid credentials."}, status="403")
+
+    uid = request.POST.get("user", None)
+    if uid is None:
+        return JsonResponse({"error": "No user provided."}, status="400")
+
+    try:
+        g = UserGroup.objects.get(id=gid)
+    except UserGroup.DoesNotExist:
+        return JsonResponse({"error": "No such group."}, status="400")
+
+    if g.owner.id != user.id:
+        return JsonResponse({"error": "You don't own this group."}, status="403")
+
+    try:
+        u = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "No such user."}, status="400")
+
+    try:
+        g.members.get(id=uid)
+    except User.DoesNotExist:
+        in_group = False
+    else:
+        in_group = True
+
+    if in_group is False:
+        return JsonResponse({"error": "User not found in group."}, status="400")
+
+    g.members.remove(u)
+    g.save()
+
+    return JsonResponse({"status": "success"})
+
+
+def add_user_to_group(request, gid):
+    if request.method != "POST":
+        h = HttpResponse(status="405")
+        h["Allow"] = "POST"
+        return h
+
+    user = auth_and_validate(request)
+    if user is False:
+        return JsonResponse({"error": "Invalid credentials."}, status="403")
+
+    uid = request.POST.get("user", None)
+    if uid is None:
+        return JsonResponse({"error": "No user provided."}, status="400")
+
+    try:
+        g = UserGroup.objects.get(id=gid)
+    except UserGroup.DoesNotExist:
+        return JsonResponse({"error": "No such group."}, status="400")
+
+    if g.owner.id != user.id:
+        return JsonResponse({"error": "You don't own this group."}, status="403")
+
+    try:
+        u = User.objects.get(id=uid)
+    except User.DoesNotExist:
+        return JsonResponse({"error": "No such user."}, status="400")
+
+    try:
+        g.members.get(id=uid)
+    except User.DoesNotExist:
+        in_group = False
+    else:
+        in_group = True
+
+    if user.id == int(uid) or in_group is True:
+        return JsonResponse({"error": "User already in group."}, status="400")
+
+    g.members.add(u)
+    g.save()
+
+    return JsonResponse({"status": "success"})
+
+
 def search_users(request):
     user = auth_and_validate(request)
     if user is False:
         return HttpResponse("Invalid credentials.", status="403")
 
-    term = request.GET.get("search", None)
+    term = request.GET.get("term", None)
     if term is None:
         return HttpResponse("No search term provided.", status="400")
 
-    if term is not None:
-        words = term.split()
-    else:
-        words = []
+    words = term.split()
 
     users = User.objects.all()
     user_scores = []
@@ -85,7 +168,7 @@ def search_users(request):
         scores = []
         for s in u_strings:
             if not s:
-                scores.append([len(word) * 10])
+                scores.append([len(word) * 10 for word in words])
                 continue
             word_scores = []
             for word in words:
@@ -99,6 +182,15 @@ def search_users(request):
                 score = min(substring_scores)
                 word_scores.append(score)
             scores.append(word_scores)
+
+        not_matching = 0
+        for score in scores:
+            for i, s in enumerate(score):
+                print i, s, len(words[i]) * 10
+                if s == len(words[i]) * 10:
+                    not_matching += 1
+        if not_matching == len(scores) * len(words):
+            continue
         user_scores.append((scores, u))
 
     # Sort the users
@@ -106,13 +198,19 @@ def search_users(request):
     vals = {}
     users = []
     for u in sorted_users:
-        u = u[1]
+        user = u[1]
         users.append({
-            "first_name": u.first_name,
-            "last_name": u.last_name,
-            "username": u.username,
-            "email": u.email,
-            "id": u.id
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "username": user.username,
+            "email": user.email,
+            "id": user.id,
+            "scores": {
+                "username": u[0][0],
+                "email": u[0][1],
+                "last_name": u[0][2],
+                "first_name": u[0][3]
+            }
         })
     vals["users"] = users
     return JsonResponse(vals)
