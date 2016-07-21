@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.generic import View
+from django.core.urlresolvers import reverse
 from django.template import RequestContext, loader
 import json
 from django.contrib.auth import authenticate, login
@@ -39,6 +40,28 @@ logger.addHandler(fh)
 config = settings.CONFIG
 
 
+def shared_or_login(f):
+    """
+    Allows anonymous "logins" of shared group content.
+
+    Functions using this decorator must accept a "groups" keyword argument.
+    """
+    def wrap(request, *args, **kwargs):
+        groups = None
+
+        if request.user.is_authenticated():
+            groups = request.user.group_memberships.all()
+        else:
+            groups = request.session["groups"]
+            if len(groups) == 0:
+                return redirect('login-page')
+            groups = UserGroup.objects.filter(id__in=groups)
+
+        kwargs["groups"] = groups
+        return f(request, *args, **kwargs)
+    return wrap
+
+
 def auth(request):
     if request.user.is_authenticated():
         redirect("browse-datasets")
@@ -61,6 +84,20 @@ def login_page(request):
     return HttpResponse(template.render(context))
 
 
+def anonymous_login(request, share_key):
+    try:
+        group = UserGroup.objects.get(view_key=share_key)
+    except UserGroup.DoesNotExist:
+        messages.error("Invalid shared URL.")
+        return redirect("login-page")
+
+    groups = request.session.get("groups", [])
+    if group.id not in groups:
+        groups.append(group.id)
+    request.session["groups"] = groups
+    return redirect('browse-datasets')
+
+
 @login_required
 def logout_page(request):
     from django.contrib.auth import logout
@@ -70,10 +107,14 @@ def logout_page(request):
     return redirect("login-page")
 
 
-@login_required
-def output(request, dataset, package):
+@shared_or_login
+def output(request, dataset, package, groups=None):
     try:
-        dataset = Dataset.objects.get(name=dataset, owner=request.user)
+        dataset = Dataset.objects.get(id=dataset)
+
+        if not dataset.user_has_access(request.user, groups):
+            raise Dataset.DoesNotExist()
+
         package_index = os.path.join(dataset.path, "%s-index.json" % package)
         if os.path.exists(package_index):
             # Should now rebuild the pages in case of updates
@@ -126,7 +167,7 @@ def manage_group(request, group_id):
         messages.error(request, error)
         return redirect("view-groups")
 
-    vals = {"group": group}
+    vals = {"group": group, "share": request.build_absolute_uri(reverse("anonymous-login", args=[group.view_key]))}
     rc = RequestContext(request, vals)
     template = loader.get_template("exploratory_analysis/group_page.html")
     return HttpResponse(template.render(rc))
@@ -140,7 +181,7 @@ def create_group(request):
         return r
     expects = request.META.get("HTTP_EXPECT", "text/html")
 
-    r = HttpResponse()
+    r = HttpResponse(status=200)
     if expects.lower() == "application/json":
         # it's an ajax call
         data = json.loads(request.body)
@@ -150,6 +191,7 @@ def create_group(request):
         data = request.POST
 
     if "name" not in data:
+        print "no name provided"
         r.status_code = 400
         reason = "No name provided for group."
 
@@ -159,6 +201,7 @@ def create_group(request):
         group = UserGroup(name=data["name"], owner=request.user)
         group.save()
     else:
+        print "group exists"
         r.status_code = 400
         reason = "Group '%s' already exists." % data["name"]
 
@@ -172,19 +215,35 @@ def create_group(request):
         if expects.lower() == "application/json":
             r.body = json.dumps({"id": group.id, "name": group.name})
         else:
-            messages.error(reason)
             return redirect(view_group_memberships)
 
     return r
 
 
-@login_required
-def output_file(request, dataset, package, path):
+@shared_or_login
+def output_file(request, dataset, package, path, groups=None):
     try:
-        dataset = Dataset.objects.get(name=dataset, owner=request.user)
+        dataset = Dataset.objects.get(id=dataset)
     except Dataset.DoesNotExist:
         # Need to check if user is in group with access to dataset
-        return HttpResponse("No dataset matching %s found for user." % dataset, status="404")
+        return HttpResponse("No dataset matching %s found." % dataset, status="404")
+
+    if request.user.is_authenticated():
+        user_id = request.user.id
+    else:
+        user_id = None
+
+    if dataset.owner.id != user_id:
+        found = False
+        for group in groups:
+            try:
+                group.datasets.objects.get(id=dataset.id)
+            except Dataset.DoesNotExist:
+                pass
+            else:
+                found = True
+        if found is False:
+            return HttpResponse("User does not have access to dataset %s" % dataset, status="404")
 
     package_index = os.path.join(dataset.path, "%s-index.json" % package)
     if not os.path.exists(package_index):
@@ -220,9 +279,14 @@ def output_file(request, dataset, package, path):
     return HttpResponse(open(file_path))
 
 
-@login_required
-def browse_datasets(request):
-    datasets = request.user.dataset_set.all()
+@shared_or_login
+def browse_datasets(request, groups=None):
+    if request.user.is_authenticated():
+        datasets = request.user.dataset_set.all()
+    else:
+        datasets = []
+    for group in groups:
+        datasets.extend(group.datasets.all())
     template = loader.get_template("exploratory_analysis/browse.html")
     rc = RequestContext(request, {"datasets": datasets})
     return HttpResponse(template.render(rc))

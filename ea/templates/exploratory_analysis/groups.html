@@ -13,10 +13,6 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-12">
-			<div class="form-group">
-				<label for="search">Find group: </label>
-				<input type="search" class="form-control" name="search_groups"/>
-			</div>
 			<form data-autojax='true' action="{% url 'create-group' %}" method='POST'>
 				{% csrf_token %}
 				<div class="form-group">

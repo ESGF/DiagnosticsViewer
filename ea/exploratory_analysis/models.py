@@ -4,6 +4,7 @@ import os
 import hashlib
 import json
 
+
 # Create your models here.
 
 
@@ -13,8 +14,15 @@ class UserGroup(models.Model):
     """
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="owned_groups")
     name = models.TextField()
-    datasets = models.ManyToManyField("Dataset", blank=True)
+    datasets = models.ManyToManyField("Dataset", related_name="groups", blank=True)
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="group_memberships", blank=True)
+    view_key = models.TextField(blank=True)  # Provide unauthenticated access to this group's content
+
+    def save(self):
+        if not self.view_key:
+            random_bytes = os.urandom(32)
+            self.view_key = ''.join(x.encode('hex') for x in random_bytes)
+        super(UserGroup, self).save()
 
 
 class UserKey(models.Model):
@@ -56,3 +64,15 @@ class Dataset(models.Model):
             if f.endswith("index.json") and f[-11] == "-":
                 indices.append(f[:-11])
         return indices
+
+    def user_has_access(self, user, groups=None):
+        if user.is_authenticated() and user.id == self.owner.id:
+            return True
+        found = False
+        if groups is not None:
+            try:
+                group = self.groups.objects.filter(id__in=[g.id for g in groups])
+                return True
+            except UserGroup.DoesNotExist:
+                return False
+        return False

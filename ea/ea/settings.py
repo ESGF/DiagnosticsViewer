@@ -92,17 +92,14 @@ db = {
 }
 
 db_conf = config.items("database")
-
-if "engine" in db_conf:
-    db["ENGINE"] = config.get("database", "engine")
-if "host" in db_conf:
-    db["HOST"] = config.get("database", "host")
-if "name" in db_conf:
-    db["NAME"] = config.get('database', 'name')
+for key, val in db_conf:
+    db[key.upper()] = val
 
 DATABASES = {
     'default': db
 }
+
+print DATABASES
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 

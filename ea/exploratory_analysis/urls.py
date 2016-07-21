@@ -8,6 +8,7 @@ urlpatterns = [
 
     # Authentication views
     url(r'^login/$', views.login_page, name='login-page'),
+    url(r'^login/anonymous/(?P<share_key>[a-f0-9]{64})/$', views.anonymous_login, name="anonymous-login"),
     url(r'^logout/$', views.logout_page, name='logout-page'),
     url(r'^auth/$', views.auth, name='auth'),
 
@@ -17,14 +18,6 @@ urlpatterns = [
     url(r'^group/create/$', views.create_group, name="create-group"),
 
     # output_viewer
-    url(r'^output/(?P<dataset>[^/]+)/(?P<package>[^/]+)/$', views.output, name="output"),
-    url(r'^output/(?P<dataset>[^/]+)/(?P<package>[^/]+)/(?P<path>.*)$', views.output_file, name="output-file"),
+    url(r'^output/(?P<dataset>\d+)/(?P<package>[^/]+)/$', views.output, name="output"),
+    url(r'^output/(?P<dataset>\d+)/(?P<package>[^/]+)/(?P<path>.*)$', views.output_file, name="output-file"),
 ]
-
-
-# service API for retrieving dataset variables
-# url(r'^dataset_variables/(?P<dataset_name>\w+)/$', views.dataset_variables, name='dataset_variables'),
-
-
-# service API for retrieving dataset pacakages
-# url(r'^dataset_packages/(?P<dataset_name>\w+)/$', views.dataset_packages, name='dataset_packages'),
