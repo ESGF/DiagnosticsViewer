@@ -11,7 +11,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.text import slugify
 from django.templatetags.static import static
 from django.contrib import messages
-#from metrics.frontend.lmwgmaster import *
 from django.contrib.staticfiles.storage import staticfiles_storage
 
 from django.views.decorators.csrf import csrf_exempt
@@ -286,5 +285,7 @@ def browse_datasets(request, groups=None):
     for group in groups:
         datasets.extend(group.datasets.all())
     template = loader.get_template("exploratory_analysis/browse.html")
+    for ds in datasets:
+        print ds.packages
     rc = RequestContext(request, {"datasets": datasets})
     return HttpResponse(template.render(rc))

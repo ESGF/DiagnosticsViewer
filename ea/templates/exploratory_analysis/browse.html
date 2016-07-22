@@ -5,7 +5,7 @@
 <style>
 iframe {
 	width:100%;
-	height:600px;
+	height:800px;
 	border:none;
 }
 </style>
@@ -20,13 +20,12 @@ iframe {
 					<label for="dataset"></label>
 					<select id="dataset">
 						{% for ds in datasets %}
-						<option value="{{ds.name}}">{{ds.proper_name}}</option>
+						<optgroup label="{{ds.proper_name}}">
+							{% for pkg in ds.packages %}
+							<option data-id="{{ ds.id }}" value="{{pkg}}">{{ds.proper_name}}: {{ pkg }}</option>
+							{% endfor %}
+						</optgroup>
 						{% endfor %}
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="package">Package</label>
-					<select disabled id="package">
 					</select>
 				</div>
 			</form>
@@ -43,7 +42,7 @@ iframe {
 
 <script type="text/javascript">
 	function set_index(dataset, package) {
-		$("#index").attr("src", "/exploratory_analysis/output/" + dataset + "/" + package).load(function(){
+		$("#index").attr("src", "/output/" + dataset + "/" + package + "/").load(function(){
 			this.contentWindow.steal_links(index_link);
 		});
 	}
@@ -54,22 +53,17 @@ iframe {
 
 	$("body").ready(function(){
 		$("#dataset").change(function() {
-			var dataset = $(this).val();
-			$.get("/ea_services/dataset_packages/" + dataset, function(data){
-				var pkg = $("#package").removeAttr('disabled');
-				var first = data[0];
-				data.map(function(d){
-					pkg.append($("<option value='" + d + "'>" + d + "</option>"));
-				});
-
-				set_index(dataset, first);
-			});
-		});
-		$("#package").change(function() {
-			var dataset = $("#dataset").val(), package=$("#package").val();
-			console.log(dataset, package);
+			var index = this.selectedIndex;
+			var option = $(this.options[index]);
+			var dataset = option.attr("data-name");
+			var package = option.val();
 			set_index(dataset, package);
 		});
+	{% with datasets|first as ds %}
+		{% with ds.packages|first as pkg %}
+		set_index("{{ds.id}}", "{{pkg}}");
+		{% endwith %}
+	{% endwith %}
 	});
 </script>
 

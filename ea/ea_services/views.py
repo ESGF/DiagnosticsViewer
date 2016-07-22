@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 from django.template import RequestContext, loader
 from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from exploratory_analysis.models import UserKey
 from django.utils.crypto import constant_time_compare
@@ -43,8 +44,10 @@ def auth_and_validate(request):
         return request.user
     body = request.body
     if "HTTP_X_USERID" not in request.META:
+        print "no userid"
         return False
     if "HTTP_X_SIGNATURE" not in request.META:
+        print "no signature"
         return False
     try:
         u = User.objects.get(id__exact=int(request.META["HTTP_X_USERID"]))
@@ -55,10 +58,13 @@ def auth_and_validate(request):
             raise ValueError("Invalid signature.")
         return u
     except User.DoesNotExist:
+        print "User doesn't exist"
         return False
     except UserKey.DoesNotExist:
+        print "Key doesn't exist"
         return False
     except ValueError as e:
+        print "Bad signature"
         return False
 
 
@@ -233,31 +239,32 @@ class CredentialsView(View):
             return JsonResponse({"key": key.key, "id": user.id})
 
 
-class UploadView(View):
-    def post(self, request, dataset_name):
-        user = auth_and_validate(request)
-        if user is False:
-            return HttpResponse("Invalid credentials.", status="403")
+@csrf_exempt
+def upload_files(request, dataset_name):
+    user = auth_and_validate(request)
+    if user is False:
+        print "No user :("
+        return HttpResponse("Invalid credentials.", status="403")
 
-        whitelist = ["nc", "hdf5", "hdf4", "bin", "ascii", "text", "txt",
-                     "grib", "grb", "ctl", "xml", "pp", "dic", "jpg", "jpeg",
-                     "webp", "gif", "png", "apng", "tiff", "bmp", "ico", "svg",
-                     "pdf"]
-        try:
-            dataset = Dataset.objects.get(name=dataset_name, owner=user)
-        except Dataset.DoesNotExist:
-            dataset = Dataset(name=dataset_name, owner=user)
-            dataset.save()
+    whitelist = ["nc", "hdf5", "hdf4", "bin", "ascii", "text", "txt",
+                 "grib", "grb", "ctl", "xml", "pp", "dic", "jpg", "jpeg",
+                 "webp", "gif", "png", "apng", "tiff", "bmp", "ico", "svg",
+                 "pdf"]
+    try:
+        dataset = Dataset.objects.get(name=dataset_name, owner=user)
+    except Dataset.DoesNotExist:
+        dataset = Dataset(name=dataset_name, owner=user)
+        dataset.save()
 
-        path = dataset.path
-        if not os.path.exists(path):
-            os.makedirs(path)
+    path = dataset.path
+    if not os.path.exists(path):
+        os.makedirs(path)
 
-        for f in request.FILES:
-            fname, ext = os.path.splitext(f)
-            fname = "--".join(fname.split(os.sep))
-            fpath = os.path.join(path, slugify(fname) + ext)
-            with open(fpath, "wb+") as upload:
-                for chunk in request.FILES[f].chunks():
-                    upload.write(chunk)
-        return HttpResponse("Success")
+    for f in request.FILES:
+        fname, ext = os.path.splitext(f)
+        fname = "--".join(fname.split(os.sep))
+        fpath = os.path.join(path, slugify(fname) + ext)
+        with open(fpath, "wb+") as upload:
+            for chunk in request.FILES[f].chunks():
+                upload.write(chunk)
+    return HttpResponse("Success")
