@@ -71,7 +71,7 @@ class Dataset(models.Model):
         found = False
         if groups is not None:
             try:
-                group = self.groups.objects.filter(id__in=[g.id for g in groups])
+                group = self.groups.filter(id__in=[g.id for g in groups])
                 return True
             except UserGroup.DoesNotExist:
                 return False

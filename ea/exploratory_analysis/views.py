@@ -234,7 +234,7 @@ def output_file(request, dataset, package, path, groups=None):
         found = False
         for group in groups:
             try:
-                group.datasets.objects.get(id=dataset.id)
+                group.datasets.get(id=dataset.id)
             except Dataset.DoesNotExist:
                 pass
             else:
@@ -284,6 +284,7 @@ def browse_datasets(request, groups=None):
         datasets = []
     for group in groups:
         datasets.extend(group.datasets.all())
+    print groups, datasets
     template = loader.get_template("exploratory_analysis/browse.html")
     for ds in datasets:
         print ds.packages

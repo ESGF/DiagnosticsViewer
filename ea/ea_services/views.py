@@ -68,6 +68,49 @@ def auth_and_validate(request):
         return False
 
 
+def share_dataset(request):
+    if request.method != "POST":
+        h = HttpResponse(status="405")
+        h["Allow"] = "POST"
+        return h
+
+    user = auth_and_validate(request)
+    if user is False:
+        return JsonResponse({"error": "Invalid credentials."}, status="403")
+
+    gid = request.POST.get("group", None)
+    if gid is None:
+        return JsonResponse({"error": "No group provided."}, status="400")
+
+    try:
+        g = user.group_memberships.get(id=gid)
+    except UserGroup.DoesNotExist:
+        try:
+            g = user.owned_groups.get(id=gid)
+        except UserGroup.DoesNotExist:
+            return JsonResponse({"error": "User not in any group matching request."}, status="400")
+
+    ds_id = request.POST.get('dataset', None)
+    if ds_id is None:
+        return JsonResponse({"error": "No dataset provided."}, status="400")
+
+    try:
+        ds = user.dataset_set.get(id=ds_id)
+    except Dataset.DoesNotExist:
+        return JsonResponse({"error": "User does not own any dataset matching request."}, status="400")
+
+    try:
+        in_group = g.datasets.get(id=ds_id)
+    except Dataset.DoesNotExist:
+        pass
+    else:
+        return JsonResponse({"error": "Dataset already shared with group."}, status="400")
+
+    g.datasets.add(ds)
+    g.save()
+    return JsonResponse({"status": "success"})
+
+
 def remove_user_from_group(request, gid):
     if request.method != "POST":
         h = HttpResponse(status="405")
