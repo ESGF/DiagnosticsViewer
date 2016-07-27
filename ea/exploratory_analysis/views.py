@@ -6,7 +6,6 @@ from django.template import RequestContext, loader
 import json
 from django.contrib.auth import authenticate, login
 from django.conf import settings
-from metrics.frontend import lmwgmaster
 from django.contrib.auth.decorators import login_required
 from django.utils.text import slugify
 from django.templatetags.static import static
@@ -24,7 +23,6 @@ import os
 import shutil
 from output_viewer.page import Page
 
-from utils import isLoggedIn, generate_token_url
 
 logger = logging.getLogger('exploratory_analysis')
 logger.setLevel(logging.WARNING)
@@ -51,7 +49,7 @@ def shared_or_login(f):
         if request.user.is_authenticated():
             groups = request.user.group_memberships.all()
         else:
-            groups = request.session["groups"]
+            groups = request.session.get("groups", [])
             if len(groups) == 0:
                 return redirect('login-page')
             groups = UserGroup.objects.filter(id__in=groups)
