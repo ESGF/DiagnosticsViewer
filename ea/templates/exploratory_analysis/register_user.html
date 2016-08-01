@@ -27,6 +27,9 @@
 					<label for="password">Password</label>
 					<input type='password' name="password" />
 				</div>
+				{% if captcha %}
+				{{ captcha }}
+				{% endif %}
 				<h4>Optional</h4>
 				<div class="form-group">
 					<label for="first_name">First Name</label>
