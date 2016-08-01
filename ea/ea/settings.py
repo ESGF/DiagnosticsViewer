@@ -65,7 +65,7 @@ INSTALLED_APPS = (
 )
 
 if RECAPTCHA_ENABLED:
-    INSTALLED_APPS = INSTALLED_APPS + ("captcha")
+    INSTALLED_APPS = INSTALLED_APPS + ("captcha",)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
