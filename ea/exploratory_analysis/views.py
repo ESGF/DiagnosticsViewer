@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from django.core.urlresolvers import reverse
 from django.template import RequestContext, loader
@@ -101,7 +101,7 @@ def register(request):
             resp = submit(response, challenge, settings.RECAPTCHA_PRIVATE_KEY, ip, use_ssl=True)
             if not resp.is_valid:
                 messages.error(request, "Please fill out the captcha correctly")
-                return redirect("register-account", captcha_error=resp.error_code)
+                return HttpResponseRedirect(reverse("register-account") + "?captcha_error=" + resp.error_code)
 
         username = request.POST.get("username", None)
         password = request.POST.get("password", None)
