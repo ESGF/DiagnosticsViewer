@@ -86,9 +86,9 @@ def register(request):
             # Validate the captcha
             from captcha.client import submit
             response = request.POST.get('recaptcha_response_field', None)
-            challenge = request.POST.get("recaptca_challenge_field", None)
+            challenge = request.POST.get("recaptcha_challenge_field", None)
             if None in (response, challenge):
-                messages.error(request, "Please fill out the captcha correctly.")
+                messages.error(request, "Please fill out the captcha, and make sure javascript is enabled.")
                 return redirect("register-account")
 
             # Get the IP address
@@ -98,9 +98,9 @@ def register(request):
             else:
                 ip = request.META.get('REMOTE_ADDR')
 
-            resp = submit(response, challenge, settings.RECAPTCHA_PRIVATE_KEY, ip, use_ssl=True)
+            resp = submit(challenge, response, settings.RECAPTCHA_PRIVATE_KEY, ip, use_ssl=True)
             if not resp.is_valid:
-                messages.error(request, "Please fill out the captcha correctly")
+                messages.error(request, "Please fill out the captcha correctly.")
                 return HttpResponseRedirect(reverse("register-account") + "?captcha_error=" + resp.error_code)
 
         username = request.POST.get("username", None)
