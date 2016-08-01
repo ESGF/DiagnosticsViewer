@@ -68,7 +68,8 @@ def register(request):
     if request.method == "GET":
         if settings.RECAPTCHA_ENABLED:
             from captcha.client import displayhtml
-            captcha_widget = displayhtml(settings.RECAPTCHA_PUBLIC_KEY, {}, use_ssl=True)
+            errcode = request.GET.get("captcha_error", None)
+            captcha_widget = displayhtml(settings.RECAPTCHA_PUBLIC_KEY, {}, error=errcode, use_ssl=True)
         else:
             captcha_widget = None
 
@@ -99,8 +100,8 @@ def register(request):
 
             resp = submit(response, challenge, settings.RECAPTCHA_PRIVATE_KEY, ip, use_ssl=True)
             if not resp.is_valid:
-                messages.error(request, "Please fill out the captcha correctly.")
-                return redirect("register-account")
+                messages.error(request, "Please fill out the captcha correctly")
+                return redirect("register-account", captcha_error=resp.error_code)
 
         username = request.POST.get("username", None)
         password = request.POST.get("password", None)
