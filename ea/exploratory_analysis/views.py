@@ -80,6 +80,28 @@ def register(request):
         template = loader.get_template("exploratory_analysis/register_user.html")
         return HttpResponse(template.render(ctx))
     elif request.method == "POST":
+
+        if settings.RECAPTCHA_ENABLED:
+            # Validate the captcha
+            from captcha.client import submit
+            response = request.POST.get('recaptcha_response_field', None)
+            challenge = request.POST.get("recaptca_challenge_field", None)
+            if None in (response, challenge):
+                messages.error(request, "Please fill out the captcha correctly.")
+                return redirect("register-account")
+
+            # Get the IP address
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+
+            resp = submit(response, challenge, settings.RECAPTCHA_PRIVATE_KEY, ip, use_ssl=True)
+            if not resp.is_valid:
+                messages.error(request, "Please fill out the captcha correctly.")
+                return redirect("register-account")
+
         username = request.POST.get("username", None)
         password = request.POST.get("password", None)
         email = request.POST.get("email", None)
@@ -108,7 +130,7 @@ def register(request):
             if u.is_active is False:
                 messages.error(request, "There's been an error registering your account. Please contact support with your desired username.")
                 return redirect("register-account")
-            messages.success("Welcome to the site!")
+            messages.success(request, "Welcome to the site!")
             login(request, u)
             return redirect("browse-datasets")
         else:
