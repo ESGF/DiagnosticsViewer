@@ -67,13 +67,13 @@ def register(request):
 
     if request.method == "GET":
         if settings.RECAPTCHA_ENABLED:
-            from captcha.widgets import ReCaptcha
-            captcha_widget = ReCaptcha()
+            from captcha.client import displayhtml
+            captcha_widget = displayhtml(settings.RECAPTCHA_PUBLIC_KEY, {}, use_ssl=True)
         else:
             captcha_widget = None
 
         vals = {
-            "captcha": captcha_widget,
+            "captcha": ,
         }
 
         ctx = RequestContext(request, vals)

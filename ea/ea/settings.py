@@ -48,6 +48,7 @@ if config.has_section("recaptcha"):
         RECAPTCHA_PRIVATE_KEY = recaptcha.get("secret_key", None)
         if RECAPTCHA_PRIVATE_KEY is None:
             RECAPTCHA_ENABLED = False
+    RECAPTCHA_USE_SSL = True
 else:
     RECAPTCHA_ENABLED = False
 
