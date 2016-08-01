@@ -357,7 +357,7 @@ def output_file(request, dataset, package, path, groups=None):
 @shared_or_login
 def browse_datasets(request, groups=None):
     if request.user.is_authenticated():
-        datasets = request.user.dataset_set.all()
+        datasets = list(request.user.dataset_set.all())
     else:
         datasets = []
     for group in groups:

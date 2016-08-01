@@ -145,7 +145,11 @@ iframe {
 		});
 		{% with datasets|first as ds %}
 		{% with ds.packages|first as pkg %}
+		{% if ds %}
+		{% if pkg %}
 		set_index("{{ds.id}}", "{{pkg}}");
+		{% endif %}
+		{% endif %}
 		{% endwith %}
 		{% endwith %}
 		$("#share_button").click(function(){
