@@ -73,7 +73,7 @@ def register(request):
             captcha_widget = None
 
         vals = {
-            "captcha": ,
+            "captcha": captcha_widget,
         }
 
         ctx = RequestContext(request, vals)
