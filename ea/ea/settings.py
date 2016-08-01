@@ -33,8 +33,23 @@ LOGIN_URL = "/login"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config.get("options", "secret_key")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [config.get("options", "hostname")]
 
+# Only matters if captcha is integrated
+RECAPTCHA_USE_SSL = True
+
+if config.has_section("recaptcha"):
+    RECAPTCHA_ENABLED = True
+    recaptcha = {k: v for k, v in config.items("recaptcha")}
+    RECAPTCHA_PUBLIC_KEY = recaptcha.get("site_key", None)
+    if RECAPTCHA_PUBLIC_KEY is None:
+        RECAPTCHA_ENABLED = False
+    else:
+        RECAPTCHA_PRIVATE_KEY = recaptcha.get("secret_key", None)
+        if RECAPTCHA_PRIVATE_KEY is None:
+            RECAPTCHA_ENABLED = False
+else:
+    RECAPTCHA_ENABLED = False
 
 # Application definition
 
@@ -48,6 +63,9 @@ INSTALLED_APPS = (
     'exploratory_analysis',
     'ea_services',
 )
+
+if RECAPTCHA_ENABLED:
+    INSTALLED_APPS = INSTALLED_APPS + ("captcha")
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

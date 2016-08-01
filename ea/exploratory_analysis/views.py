@@ -15,6 +15,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from .models import Dataset, UserGroup
+from django.contrib.auth.models import User
 
 import json
 import logging
@@ -59,6 +60,62 @@ def shared_or_login(f):
     return wrap
 
 
+def register(request):
+
+    if request.user.is_authenticated():
+        redirect("browse-datasets")
+
+    if request.method == "GET":
+        if settings.RECAPTCHA_ENABLED:
+            from captcha.widgets import ReCaptcha
+            captcha_widget = ReCaptcha()
+        else:
+            captcha_widget = None
+
+        vals = {
+            "captcha": captcha_widget,
+        }
+
+        ctx = RequestContext(request, vals)
+        template = loader.get_template("exploratory_analysis/register_user.html")
+        return HttpResponse(template.render(ctx))
+    elif request.method == "POST":
+        username = request.POST.get("username", None)
+        password = request.POST.get("password", None)
+        email = request.POST.get("email", None)
+
+        if None in (username, password, email):
+            messages.error(request, "Username, password, and email are required fields.")
+            return redirect("register-account")
+
+        first_name = request.POST.get("first_name", None)
+        last_name = request.POST.get("last_name", None)
+
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = User(username=username, email=email, first_name=first_name, last_name=last_name)
+            user.set_password(password)
+            user.is_active = True
+            user.save()
+        else:
+            messages.error(request, "Username taken.")
+            return redirect("register-account")
+
+        u = authenticate(username=username, password=password)
+
+        if u is not None:
+            if u.is_active is False:
+                messages.error(request, "There's been an error registering your account. Please contact support with your desired username.")
+                return redirect("register-account")
+            messages.success("Welcome to the site!")
+            login(request, u)
+            return redirect("browse-datasets")
+        else:
+            messages.error(request, "Unable to register user.")
+            return redirect("register-account")
+
+
 def auth(request):
     if request.user.is_authenticated():
         redirect("browse-datasets")
@@ -85,7 +142,7 @@ def anonymous_login(request, share_key):
     try:
         group = UserGroup.objects.get(view_key=share_key)
     except UserGroup.DoesNotExist:
-        messages.error("Invalid shared URL.")
+        messages.error(request, "Invalid shared URL.")
         return redirect("login-page")
 
     groups = request.session.get("groups", [])

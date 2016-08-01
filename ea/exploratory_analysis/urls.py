@@ -20,4 +20,7 @@ urlpatterns = [
     # output_viewer
     url(r'^output/(?P<dataset>\d+)/(?P<package>[^/]+)/$', views.output, name="output"),
     url(r'^output/(?P<dataset>\d+)/(?P<package>[^/]+)/(?P<path>.*)$', views.output_file, name="output-file"),
+
+    # Register user
+    url(r'^account/register$', views.register, name="register-account"),
 ]

@@ -5,6 +5,6 @@ migrations/
 *.pot
 *.pyc
 .DS_Store
-*.cfg
+/ea/eaconfig.cfg
 env/
 *.db

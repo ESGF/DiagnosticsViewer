@@ -1,0 +1,47 @@
+{% extends "exploratory_analysis/base.html" %}
+
+{% block content %}
+
+<style>
+
+</style>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<h1>Register Account</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<form action="{% url 'register-account' %}" method="post">
+				{% csrf_token %}
+				<div class="form-group">
+					<label for="username">Username</label>
+					<input type='text' name="username" />
+				</div>
+				<div class="form-group">
+					<label for="email">Email Address</label>
+					<input type='email' name="email" />
+				</div>
+				<div class="form-group">
+					<label for="password">Password</label>
+					<input type='password' name="password" />
+				</div>
+				<h4>Optional</h4>
+				<div class="form-group">
+					<label for="first_name">First Name</label>
+					<input type='text' name="first_name" />
+				</div>
+				<div class="form-group">
+					<label for="last_name">Last Name</label>
+					<input type='text' name="last_name" />
+				</div>
+				<button type="submit" class="btn btn-submit">Register</button>
+			</form>
+		</div>
+	</div>
+
+<script type="text/javascript">
+</script>
+
+{% endblock %}
