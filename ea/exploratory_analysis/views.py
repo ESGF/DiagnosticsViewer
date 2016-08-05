@@ -197,7 +197,8 @@ def output(request, dataset, package, groups=None):
                 template = loader.get_template("exploratory_analysis/output_index.html")
                 return HttpResponse(template.render({"spec": dataset.package_index(package), "package": package}))
             else:
-                return HttpResponse("Please wait while package %s is built for viewing...")
+                dataset.rebuild()
+                return HttpResponse("Please wait while package %s is built for viewing..." % package)
         else:
             return HttpResponse("Package %s hasn't been uploaded to this dataset." % package, status="404")
     except Dataset.DoesNotExist:

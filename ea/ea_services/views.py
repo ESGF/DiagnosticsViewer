@@ -317,6 +317,6 @@ def upload_files(request, dataset_name):
 
     # 5 minutes should be enough for any further uploads to get started; once that
     # time is done, the cron job will take care of the rest.
-    dataset.should_rebuild = timezone.now() + datetime.timdelta(0, 300)
+    dataset.should_rebuild = timezone.now() + datetime.timedelta(0, 300)
     dataset.save()
     return HttpResponse("Success")
