@@ -118,8 +118,6 @@ DATABASES = {
     'default': db
 }
 
-print DATABASES
-
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 from django.contrib.messages import constants as messages
