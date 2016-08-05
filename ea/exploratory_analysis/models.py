@@ -67,12 +67,18 @@ class Dataset(models.Model):
                 indices.append(f[:-11])
         return indices
 
+    def pacakge_index(self, pkg):
+        if self.package_exists(pkg):
+            with open(os.path.join(self.path, pkg)) as ind:
+                return json.load(ind)
+        else:
+            return None
+
     def package_exists(self, pkg):
         return pkg in self.packages
 
     def is_package_built(self, pkg):
-        with open(os.path.join(self.path, "%s-index.json" % pkg)) as ind:
-            index = json.load(ind)
+        index = self.package_index(pkg)
         for spec in index["specification"]:
             if "short_name" not in spec:
                 spec["short_name"] = spec["title"].split()[0].lower()
@@ -96,9 +102,7 @@ class Dataset(models.Model):
     def rebuild(self):
         # Should now rebuild the pages in case of updates
         for package in self.packages:
-            package_index = os.path.join(self.path, package)
-            with open(package_index) as ind:
-                index = json.load(ind)
+            index = self.package_index(package)
             for spec in index["specification"]:
                 if "short_name" not in spec:
                     spec["short_name"] = spec["title"].split()[0].lower()

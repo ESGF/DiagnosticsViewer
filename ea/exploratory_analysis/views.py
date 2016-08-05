@@ -195,7 +195,7 @@ def output(request, dataset, package, groups=None):
         if dataset.package_exists(package):
             if dataset.is_package_built(package):
                 template = loader.get_template("exploratory_analysis/output_index.html")
-                return HttpResponse(template.render({"spec": index, "package": package}))
+                return HttpResponse(template.render({"spec": dataset.package_index(package), "package": package}))
             else:
                 return HttpResponse("Please wait while package %s is built for viewing...")
         else:
