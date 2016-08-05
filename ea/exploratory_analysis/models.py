@@ -69,7 +69,7 @@ class Dataset(models.Model):
 
     def package_index(self, pkg):
         if self.package_exists(pkg):
-            with open(os.path.join(self.path, pkg)) as ind:
+            with open(os.path.join(self.path, "%s-index.json" % pkg)) as ind:
                 return json.load(ind)
         else:
             return None
