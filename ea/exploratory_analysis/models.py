@@ -67,7 +67,7 @@ class Dataset(models.Model):
                 indices.append(f[:-11])
         return indices
 
-    def pacakge_index(self, pkg):
+    def package_index(self, pkg):
         if self.package_exists(pkg):
             with open(os.path.join(self.path, pkg)) as ind:
                 return json.load(ind)
