@@ -4,7 +4,7 @@ from django.utils.text import slugify
 import os
 import hashlib
 import json
-
+from output_viewer.page import Page
 
 # Create your models here.
 
