@@ -76,7 +76,7 @@ class Dataset(models.Model):
         for spec in index["specification"]:
             if "short_name" not in spec:
                 spec["short_name"] = spec["title"].split()[0].lower()
-            spec_path = os.path.join(self.path, "%s-%s" % (package, spec["short_name"]))
+            spec_path = os.path.join(self.path, "%s-%s" % (pkg, spec["short_name"]))
             if not os.path.exists(spec_path):
                 return False
         return True
