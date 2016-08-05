@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils.text import slugify
 import os
 import hashlib
 import json
@@ -39,6 +40,7 @@ class Dataset(models.Model):
     """
     owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.TextField()
+    should_rebuild = models.DateTimeField(blank=True)
 
     @property
     def path(self):
@@ -65,6 +67,20 @@ class Dataset(models.Model):
                 indices.append(f[:-11])
         return indices
 
+    def package_exists(self, pkg):
+        return pkg in self.packages
+
+    def is_package_built(self, pkg):
+        with open(os.path.join(self.path, "%s-index.json" % pkg)) as ind:
+            index = json.load(ind)
+        for spec in index["specification"]:
+            if "short_name" not in spec:
+                spec["short_name"] = spec["title"].split()[0].lower()
+            spec_path = os.path.join(self.path, "%s-%s" % (package, spec["short_name"]))
+            if not os.path.exists(spec_path):
+                return False
+        return True
+
     def user_has_access(self, user, groups=None):
         if user.is_authenticated() and user.id == self.owner.id:
             return True
@@ -76,3 +92,28 @@ class Dataset(models.Model):
             except UserGroup.DoesNotExist:
                 return False
         return False
+
+    def rebuild(self):
+        # Should now rebuild the pages in case of updates
+        for package in self.packages:
+            package_index = os.path.join(self.path, package)
+            with open(package_index) as ind:
+                index = json.load(ind)
+            for spec in index["specification"]:
+                if "short_name" not in spec:
+                    spec["short_name"] = spec["title"].split()[0].lower()
+                # Hack the filename to have the package prefix
+                for group in spec["rows"]:
+                    for row in group:
+                        for col in row["columns"]:
+                            if isinstance(col, dict):
+                                if "path" in col:
+                                    p = col["path"]
+                                    fname, ext = os.path.splitext(p)
+                                    fname = os.path.join(package, fname)
+                                    fname = "--".join(fname.split(os.sep))
+                                    fpath = slugify(fname) + ext
+                                    col["path"] = fpath
+
+                p = Page(spec, root_path=self.path)
+                p.build(os.path.join(self.path, "%s-%s" % (package, spec["short_name"])))

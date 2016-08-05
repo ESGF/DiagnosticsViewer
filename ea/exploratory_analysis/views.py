@@ -192,33 +192,14 @@ def output(request, dataset, package, groups=None):
         if not dataset.user_has_access(request.user, groups):
             raise Dataset.DoesNotExist()
 
-        package_index = os.path.join(dataset.path, "%s-index.json" % package)
-        if os.path.exists(package_index):
-            # Should now rebuild the pages in case of updates
-            with open(package_index) as ind:
-                index = json.load(ind)
-            for spec in index["specification"]:
-                if "short_name" not in spec:
-                    spec["short_name"] = spec["title"].split()[0].lower()
-                # Hack the filename to have the package prefix
-                for group in spec["rows"]:
-                    for row in group:
-                        for col in row["columns"]:
-                            if isinstance(col, dict):
-                                if "path" in col:
-                                    p = col["path"]
-                                    fname, ext = os.path.splitext(p)
-                                    fname = os.path.join(package, fname)
-                                    fname = "--".join(fname.split(os.sep))
-                                    fpath = slugify(fname) + ext
-                                    col["path"] = fpath
-
-                p = Page(spec, root_path=dataset.path)
-                p.build(os.path.join(dataset.path, "%s-%s" % (package, spec["short_name"])))
-            template = loader.get_template("exploratory_analysis/output_index.html")
-            return HttpResponse(template.render({"spec": index, "package": package}))
+        if dataset.package_exists(package):
+            if dataset.is_package_built(package):
+                template = loader.get_template("exploratory_analysis/output_index.html")
+                return HttpResponse(template.render({"spec": index, "package": package}))
+            else:
+                return HttpResponse("Please wait while package %s is built for viewing...")
         else:
-            return HttpResponse("No package matching %s found." % package, status="404")
+            return HttpResponse("Package %s hasn't been uploaded to this dataset." % package, status="404")
     except Dataset.DoesNotExist:
         return HttpResponse("No dataset matching %s found for user." % dataset, status="404")
 

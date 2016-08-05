@@ -14,10 +14,12 @@ import traceback
 import os
 import binascii
 import urllib
+import datetime
 import hmac
 from django.conf import settings
 import hashlib
 from django.forms.models import model_to_dict
+from django.utils import timezone
 from exploratory_analysis.models import *
 
 config = settings.CONFIG
@@ -286,7 +288,6 @@ class CredentialsView(View):
 def upload_files(request, dataset_name):
     user = auth_and_validate(request)
     if user is False:
-        print "No user :("
         return HttpResponse("Invalid credentials.", status="403")
 
     whitelist = ["nc", "hdf5", "hdf4", "bin", "ascii", "text", "txt",
@@ -297,6 +298,9 @@ def upload_files(request, dataset_name):
         dataset = Dataset.objects.get(name=dataset_name, owner=user)
     except Dataset.DoesNotExist:
         dataset = Dataset(name=dataset_name, owner=user)
+    finally:
+        # Set it to rebuild in a long time (1 day is enough, since the uploader limits upload sizes.)
+        dataset.should_rebuild = timezone.now() + datetime.timedelta(1)
         dataset.save()
 
     path = dataset.path
@@ -310,4 +314,9 @@ def upload_files(request, dataset_name):
         with open(fpath, "wb+") as upload:
             for chunk in request.FILES[f].chunks():
                 upload.write(chunk)
+
+    # 5 minutes should be enough for any further uploads to get started; once that
+    # time is done, the cron job will take care of the rest.
+    dataset.should_rebuild = timezone.now() + datetime.timdelta(0, 300)
+    dataset.save()
     return HttpResponse("Success")
