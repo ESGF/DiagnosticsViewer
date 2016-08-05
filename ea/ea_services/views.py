@@ -269,8 +269,8 @@ def search_users(request):
 
 
 class CredentialsView(View):
-    def get(self, request, username):
-        password = request.GET.get("password", None)
+    def post(self, request, username):
+        password = request.POST.get("password", None)
         if password is None:
             raise ValueError("No password.")
         user = authenticate(username=username, password=password)
