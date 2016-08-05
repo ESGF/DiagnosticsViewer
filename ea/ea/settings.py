@@ -22,7 +22,7 @@ CONFIG = config
 BASE_DIR = config.get('paths', 'root')
 os.chdir(BASE_DIR)
 
-DEBUG = config.get('options', 'debug')
+DEBUG = bool(config.get('options', 'debug'))
 STATIC_ROOT = config.get("paths", "static")
 
 LOGIN_URL = "/login"
