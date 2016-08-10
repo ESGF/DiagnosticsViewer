@@ -12,22 +12,22 @@ install:
   - conda create -q -n diags_viewer --file ea/conda_reqs.txt -c uvcdat
   - source activate diags_viewer
   - pip install -r ea/pip_reqs.txt
-  - export cfg_file=">>ea/eaconfig.cfg"
+  - export cfg_file="ea/eaconfig.cfg"
   - mkdir uploads
   - mkdir static
-  - echo "[paths]
-root = `pwd`/ea
-dataPath = `pwd`/uploads
-static = `pwd`/static
+  - echo "[paths]" >>$cfg_file
+  - echo "root = `pwd`/ea" >>$cfg_file
+  - echo "dataPath = `pwd`/uploads" >>$cfg_file
+  - echo "static = `pwd`/static" >>$cfg_file
 
-[options]
-debug = True
-secret_key = secretsecret
-hostname = localhost
-port = 8000
+  - echo "[options]" >>$cfg_file
+  - echo "debug = True" >>$cfg_file
+  - echo "secret_key = secretsecret" >>$cfg_file
+  - echo "hostname = localhost" >>$cfg_file
+  - echo "port = 8000" >>$cfg_file
 
-[database]
-ENGINE = django.db.backends.sqlite3
-NAME = `pwd`/mydb.db" >>ea/eaconfig.cfg
+  - echo "[database]" >>$cfg_file
+  - echo "ENGINE = django.db.backends.sqlite3" >>$cfg_file
+  - echo "NAME = `pwd`/mydb.db" >>$cfg_file
   - python ea/manage.py migrate
 script: echo "Done."
