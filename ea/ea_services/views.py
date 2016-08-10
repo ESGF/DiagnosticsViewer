@@ -268,20 +268,20 @@ def search_users(request):
     return JsonResponse(vals)
 
 
-class CredentialsView(View):
-    def post(self, request, username):
-        password = request.POST.get("password", None)
-        if password is None:
-            raise ValueError("No password.")
-        user = authenticate(username=username, password=password)
-        if user.is_active:
-            try:
-                key = user.userkey
-            except UserKey.DoesNotExist:
-                pk = binascii.hexlify(os.urandom(128))[:128]
-                key = UserKey(user=user, key=pk)
-                key.save()
-            return JsonResponse({"key": key.key, "id": user.id})
+@csrf_exempt
+def retrieve_key(self, request, username):
+    password = request.POST.get("password", None)
+    if password is None:
+        raise ValueError("No password.")
+    user = authenticate(username=username, password=password)
+    if user.is_active:
+        try:
+            key = user.userkey
+        except UserKey.DoesNotExist:
+            pk = binascii.hexlify(os.urandom(128))[:128]
+            key = UserKey(user=user, key=pk)
+            key.save()
+        return JsonResponse({"key": key.key, "id": user.id})
 
 
 @csrf_exempt
