@@ -31,7 +31,7 @@ mkdir uploads
 mkdir static
 
 # Build config file
-cat << >ea/eaconfig.cfg EOF
+cat >ea/eaconfig.cfg <<EOF
 [paths]
 root = `pwd`/ea
 dataPath = `pwd`/uploads
