@@ -12,3 +12,4 @@ install:
   - conda create -q -n diags_viewer --file ea/conda_reqs.txt -c uvcdat
   - source activate diags_viewer
   - pip install -r ea/pip_reqs.txt
+script: echo "Done."
