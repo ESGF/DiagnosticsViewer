@@ -3,11 +3,12 @@
 # Clean install of app using bare minimum settings
 
 conda=`which conda`
-if [ -n conda ]; then
+if [ -z conda ]; then
 	echo "ERROR: No conda binary found. Exiting."
 	exit 1
 fi
 
+# Clean up any existing conda environment
 if [ -d "env" ]; then
 	rm -r ./env
 fi
@@ -47,5 +48,7 @@ ENGINE = django.db.backends.sqlite3
 NAME = `pwd`/mydb.db
 EOF
 
+# Build the database, and make sure it's empty.
 python ea/manage.py migrate
-python ea/manage.py flush
+# NOTE: THIS WILL EMPTY YOUR DATABASE
+python ea/manage.py flush --noinput
