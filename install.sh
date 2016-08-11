@@ -7,7 +7,6 @@ if [ -z conda ]; then
 	echo "ERROR: No conda binary found. Exiting."
 	exit 1
 fi
-
 # Clean up any existing conda environment
 if [ -d "env" ]; then
 	rm -r ./env
