@@ -27,6 +27,7 @@ if [ -d static ]; then
 	rm -r static
 fi
 
+
 mkdir uploads
 mkdir static
 
