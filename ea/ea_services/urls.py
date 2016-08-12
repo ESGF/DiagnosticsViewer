@@ -2,8 +2,6 @@ from django.conf.urls import patterns, url
 
 from ea_services import views
 
-from ea_services.views import CredentialsView
-
 urlpatterns = [
     url(r'^users/search/$', views.search_users, name="user-search"),
     url(r'^group/(?P<gid>\d+)/remove_user/$', views.remove_user_from_group, name="remove-user-from-group"),
