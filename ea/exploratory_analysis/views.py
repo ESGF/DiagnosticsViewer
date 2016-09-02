@@ -344,9 +344,6 @@ def browse_datasets(request, groups=None):
         datasets = []
     for group in groups:
         datasets.extend(group.datasets.all())
-    print groups, datasets
     template = loader.get_template("exploratory_analysis/browse.html")
-    for ds in datasets:
-        print ds.packages
     rc = RequestContext(request, {"datasets": datasets})
     return HttpResponse(template.render(rc))
