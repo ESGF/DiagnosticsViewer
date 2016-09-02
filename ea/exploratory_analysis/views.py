@@ -344,6 +344,15 @@ def browse_datasets(request, groups=None):
         datasets = []
     for group in groups:
         datasets.extend(group.datasets.all())
+
+    if "dataset" in request.GET:
+        selected = None
+        for ds in datasets:
+            if ds.id == int(request.GET["dataset"]):
+                selected = ds
+    else:
+        selected = datasets[0]
+
     template = loader.get_template("exploratory_analysis/browse.html")
-    rc = RequestContext(request, {"datasets": datasets})
+    rc = RequestContext(request, {"datasets": datasets, "selected": selected})
     return HttpResponse(template.render(rc))

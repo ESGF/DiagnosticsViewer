@@ -53,7 +53,8 @@ iframe {
 					<div class="body">
 						<select multiple id="dataset">
 							{% for ds in datasets %}
-								<option data-pkgs="{{ ds.packages|join:'|' }}" value="{{ ds.id }}">{{ ds.proper_name }}</option>
+								<option data-pkgs="{{ ds.packages|join:'|' }}" value="{{ ds.id }}" {% if ds.id == selected.id %}selected{% endif %}>{{ ds.proper_name }}</option>
+									}
 							{% endfor %}
 						</select>
 					</div>
@@ -64,11 +65,9 @@ iframe {
 					</div>
 					<div class="body">
 						<select multiple id="package">
-						{% with datasets|first as ds %}
-							{% for pkg in ds.packages %}
+							{% for pkg in selected.packages %}
 							<option value="{{ pkg }}">{{pkg}}</option>
 							{% endfor %}
-						{% endwith %}
 						</select>
 					</div>
 				</div>
@@ -102,11 +101,11 @@ iframe {
 						</optgroup>
 						{% endif %}
 						{% if request.user.groups.all %}
-							<optgroup label="Member">
-							{% for grp in request.user.groups.all %}
-								<option value="{{grp.id}}">{{grp.name}}</option>
-							{% endfor %}
-							</optgroup>
+						<optgroup label="Member">
+						{% for grp in request.user.groups.all %}
+							<option value="{{grp.id}}">{{grp.name}}</option>
+						{% endfor %}
+						</optgroup>
 						{% endif %}
 					</select>
 				</div>
@@ -143,14 +142,12 @@ iframe {
 		$("#package").change(function(){
 			set_index($("#dataset").val(), $("#package").val());
 		});
-		{% with datasets|first as ds %}
-		{% with ds.packages|first as pkg %}
-		{% if ds %}
+		{% with selected.packages|first as pkg %}
+		{% if selected %}
 		{% if pkg %}
-		set_index("{{ds.id}}", "{{pkg}}");
+		set_index("{{selected.id}}", "{{pkg}}");
 		{% endif %}
 		{% endif %}
-		{% endwith %}
 		{% endwith %}
 		$("#share_button").click(function(){
 			var ds = $("#dataset").val();
