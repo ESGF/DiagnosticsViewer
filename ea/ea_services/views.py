@@ -269,7 +269,7 @@ def search_users(request):
 
 
 @csrf_exempt
-def retrieve_key(self, request, username):
+def retrieve_key(request, username):
     password = request.POST.get("password", None)
     if password is None:
         raise ValueError("No password.")
