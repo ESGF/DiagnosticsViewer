@@ -319,4 +319,4 @@ def upload_files(request, dataset_name):
     # time is done, the cron job will take care of the rest.
     dataset.should_rebuild = timezone.now() + datetime.timedelta(0, 300)
     dataset.save()
-    return HttpResponse("Success")
+    return JsonResponse({"dataset": dataset.id})
