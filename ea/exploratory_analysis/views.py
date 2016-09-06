@@ -351,7 +351,10 @@ def browse_datasets(request, groups=None):
             if ds.id == int(request.GET["dataset"]):
                 selected = ds
     else:
-        selected = datasets[0]
+        if len(datasets) > 0:
+            selected = datasets[0]
+        else:
+            selected = None
 
     template = loader.get_template("exploratory_analysis/browse.html")
     rc = RequestContext(request, {"datasets": datasets, "selected": selected})
