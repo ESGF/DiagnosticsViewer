@@ -1,51 +1,46 @@
-<div class="container-fluid">
-	<div class="row">
-		{% include "exploratory_analysis/viewer_crumbs.html" %}
-	</div>
-	<div class="row">
-		{% if col %}
-		<!-- render the column view -->
-			<h1>{{col.title}}</h1>
-			<img src="{% url 'output-file' dataset.id package col.path %}" />
-		{% else %}{% if row %}
-			<h1>{{row.title}}</h1>
-			<ul>
-			{% for c in cols %}
-				<li><a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}&group={{group.index}}&row={{row.index}}&col={{c.index}}">{{c.title}}</a></li>
-			{% endfor %}
-			</ul>
-		{% else %}{% if group %}
-			<h1>{{group.title}}</h1>
-			<ul>
-			{% for r in rows %}
-				<li><a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}&group={{group.index}}&row={{r.index}}">{{r.title}}</a></li>
-			{% endfor %}
-			</ul>
-		{% else %}{% if page %}
-			<h1>{{page.title}}</h1>
-			<ul>
-			{% for g in groups %}
-				<li><a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}&group={{g.index}}">{{g.title}}</a></li>
-			{% endfor %}
-			</ul>
-		{% else %}{% if package %}
-			<h1>{{ package }}</h1>
-			<ul>
-			{% for p in pages %}
-				<li><a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{p.index}}">{{ p.title }}</a></li>
-			{% endfor %}
-			</ul>
-		{% else %}
-			<h1>{{ dataset.name }}</h1>
-			<ul>
-			{% for p in dataset.packages %}
-				<li><a href="{% url 'viewer' dataset.id %}?package={{p|urlencode}}">{{ p.title }}</a></li>
-			{% endfor %}
-			</ul>
-		{% endif %}
-		{% endif %}
-		{% endif %}
-		{% endif %}
-		{% endif %}
-	</div>
+<div class="viewer_box">
+	{% if col %}
+	<!-- render the column view -->
+		<h1>{{col.title}}</h1>
+		<img src="{% url 'output-file' dataset.id package col.path %}" />
+	{% else %}{% if row %}
+		<h1>{{row.title}}</h1>
+		<ul>
+		{% for col in cols %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% else %}{% if group %}
+		<h1>{{group.title}}</h1>
+		<ul>
+		{% for row in rows %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% else %}{% if page %}
+		<h1>{{page.title}}</h1>
+		<ul>
+		{% for group in groups %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% else %}{% if package %}
+		<h1>{{ package }}</h1>
+		<ul>
+		{% for page in pages %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<h1>{{ dataset.name }}</h1>
+		<ul>
+		{% for package in dataset.packages %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% endif %}
+	{% endif %}
+	{% endif %}
+	{% endif %}
+	{% endif %}
 </div>

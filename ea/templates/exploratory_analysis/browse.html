@@ -86,7 +86,7 @@
 <script type="text/javascript">
 	function parseQuery(qstr) {
         var query = {};
-        var a = qstr.substr(1).split('&');
+        var a = qstr.split('&');
         for (var i = 0; i < a.length; i++) {
             var b = a[i].split('=');
             query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
@@ -121,8 +121,11 @@
 				// hijack links to just do the view call
 				$(this).find("a[href]").click(function(e){
 					var url = $(this).attr("href");
+					console.log(url);
 					var qstr = url.split("?")[1];
+					console.log(qstr);
 					var params = parseQuery(qstr);
+					console.log(params);
 					package = params.package;
 					page = params.page;
 					group = params.group;

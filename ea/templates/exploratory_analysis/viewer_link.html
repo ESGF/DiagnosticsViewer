@@ -1,0 +1,17 @@
+{% if col %}
+	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}&group={{group.index}}&row={{row.index}}&col={{col.index}}">{{col.title}}</a>
+{% else %}{% if row %}
+	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}&group={{group.index}}&row={{row.index}}">{{row.title}}</a>
+{% else %}{% if group %}
+	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}&group={{group.index}}">{{group.title}}</a>
+{% else %}{% if page %}
+	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}">{{page.title}}</a>
+{% else %}{% if package %}
+	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}">{{package}}</a>
+{% else %}
+	<a href="{% url 'viewer' dataset.id %}">{{dataset.name}}</a>
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
