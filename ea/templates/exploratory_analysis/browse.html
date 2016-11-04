@@ -3,37 +3,9 @@
 {% block content %}
 
 <style>
-iframe {
-	width:100%;
-	height:800px;
-	border:none;
-}
 
-.tabular_group .header {
-	display:inline-block;
-	width:100%;
-}
-
-.tabular_group .header>:last-child {
-	float: right;
-}
-
-.tabular_group .header>:first-child {
-	float:left;
-}
-
-.tabular_group {
-	display: inline-block;
-	min-width: 300px;
-	margin-right: 1em;
-}
-
-.tabular_group:last-child {
-	margin-right: 0;
-}
-
-.tabular_group .body * {
-	min-width:100%;
+.viewer img {
+	max-width:100%;
 }
 
 </style>
@@ -43,45 +15,39 @@ iframe {
 			<h1>Browse Datasets</h1>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-sm-8">
-				<div class="tabular_group">
-					<div class="header">
-						<label for="dataset">Dataset</label>
-						<button type="button" style="padding:0;" class="btn btn-link" id="share" data-toggle="modal" data-target="#shareModal"><i class="glyphicon glyphicon-share"></i> Share</button>
-					</div>
-					<div class="body">
-						<select multiple id="dataset">
-							{% for ds in datasets %}
-								<option data-pkgs="{{ ds.packages|join:'|' }}" value="{{ ds.id }}" {% if ds.id == selected.id %}selected{% endif %}>{{ ds.proper_name }}</option>
-									}
-							{% endfor %}
-						</select>
-					</div>
-				</div>
-				<div class="tabular_group">
-					<div class="header">
-						<label for="package">Package</label>
-					</div>
-					<div class="body">
-						<select multiple id="package">
-							{% for pkg in selected.packages %}
-							<option value="{{ pkg }}" {% if forloop.counter == 1 %}selected{% endif %}>{{pkg}}</option>
-							{% endfor %}
-						</select>
-					</div>
-				</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-sm-4">
-			<iframe id="index"></iframe>
-		</div>
-		<div class="col-sm-8">
-			<iframe id="detail"></iframe>
-		</div>
-	</div>
 
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="header">
+				<label for="dataset">Dataset</label>
+				<button type="button" style="padding:0;" class="btn btn-link" id="share" data-toggle="modal" data-target="#shareModal"><i class="glyphicon glyphicon-share"></i> Share</button>
+			</div>
+			<div class="body">
+				<select class="dataset_picker">
+					{% for ds in datasets %}
+						<option data-pkgs="{{ ds.packages|join:'|' }}" value="{{ ds.id }}" {% if ds.id == selected.id %}selected{% endif %}>{{ ds.proper_name }}</option>
+							}
+					{% endfor %}
+				</select>
+			</div>
+			<div class="viewer" data-dsid="{% if selected %}{{selected.id}}{% endif %}"></div>
+		</div>
+		<div class="col-sm-6">
+			<div class="header">
+				<label for="dataset">Dataset</label>
+				<button type="button" style="padding:0;" class="btn btn-link" id="share" data-toggle="modal" data-target="#shareModal"><i class="glyphicon glyphicon-share"></i> Share</button>
+			</div>
+			<div class="body">
+				<select class="dataset_picker">
+					{% for ds in datasets %}
+						<option data-pkgs="{{ ds.packages|join:'|' }}" value="{{ ds.id }}" {% if ds.id == selected.id %}selected{% endif %}>{{ ds.proper_name }}</option>
+							}
+					{% endfor %}
+				</select>
+			</div>
+			<div class="viewer" data-dsid="{% if selected %}{{selected.id}}{% endif %}"></div>
+		</div>
+	</div>
 	<!-- Modal -->
 	<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareLabel">
 		<div class="modal-dialog" role="document">
@@ -118,9 +84,55 @@ iframe {
 	</div>
 
 <script type="text/javascript">
-	function set_index(dataset, package) {
-		$("#index").attr("src", "/output/" + dataset + "/" + package + "/").load(function(){
-			this.contentWindow.steal_links(index_link);
+	function parseQuery(qstr) {
+        var query = {};
+        var a = qstr.substr(1).split('&');
+        for (var i = 0; i < a.length; i++) {
+            var b = a[i].split('=');
+            query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
+        }
+        return query;
+    }
+	var package = undefined, page = undefined, group = undefined, row = undefined, col = undefined;
+	function view() {
+		$(".viewer").each(function(){
+			var dataset = $(this).attr('data-dsid');
+			var url = "/viewer/" + dataset;
+			var params = {};
+			if (package !== undefined) {
+				params.package = package;
+			}
+			if (page !== undefined) {
+				params.page = page;
+			}
+			if (group !== undefined) {
+				params.group = group;
+			}
+			if (row !== undefined) {
+				params.row = row;
+			}
+			if (col !== undefined) {
+				params.col = col;
+			}
+			url += "?" + $.param(params);
+			$(this).empty()
+			$(this).load(url, function(){
+				$(this).find(".dropdown-toggle").dropdown();
+				// hijack links to just do the view call
+				$(this).find("a[href]").click(function(e){
+					var url = $(this).attr("href");
+					var qstr = url.split("?")[1];
+					var params = parseQuery(qstr);
+					package = params.package;
+					page = params.page;
+					group = params.group;
+					row = params.row;
+					col = params.col;
+					view();
+					e.preventDefault();
+				});
+			});
+			$
 		});
 	}
 
@@ -129,26 +141,14 @@ iframe {
 	}
 
 	$("body").ready(function(){
-		$("#dataset").change(function() {
+		$(".dataset_picker").change(function() {
 			var index = this.selectedIndex;
 			var option = $(this.options[index]);
 			var dataset = option.val();
-			var pkgs = option.attr("data-pkgs").split("|");
-			$("#package").empty();
-			pkgs.map(function(d){
-				$("#package").append($(document.createElement("option")).attr("value", d).text(d));
-			});
+			$(this).parent().parent().find(".viewer").attr("data-dsid", dataset);
+			view();
 		});
-		$("#package").change(function(){
-			set_index($("#dataset").val(), $("#package").val());
-		});
-		{% with selected.packages|first as pkg %}
-		{% if selected %}
-		{% if pkg %}
-		set_index("{{selected.id}}", "{{pkg}}");
-		{% endif %}
-		{% endif %}
-		{% endwith %}
+
 		$("#share_button").click(function(){
 			var ds = $("#dataset").val();
 			var group = $("#shareGroup").val();
@@ -156,6 +156,7 @@ iframe {
 				$("#shareModal").modal('hide');
 			});
 		});
+		view();
 	});
 </script>
 

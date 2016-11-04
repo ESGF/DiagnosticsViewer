@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^login/anonymous/(?P<share_key>[a-f0-9]{64})/$', views.anonymous_login, name="anonymous-login"),
     url(r'^logout/$', views.logout_page, name='logout-page'),
     url(r'^auth/$', views.auth, name='auth'),
+    url(r'^viewer/(?P<ds>[0-9]+)/$', views.view_dataset, name="viewer"),
 
     # Group views
     url(r'^group/membership/$', views.view_group_memberships, name="view-groups"),

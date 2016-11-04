@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from django.core.urlresolvers import reverse
+import pkg_resources
 from django.template import RequestContext, loader
 import json
 from django.contrib.auth import authenticate, login
@@ -47,13 +48,16 @@ def shared_or_login(f):
     def wrap(request, *args, **kwargs):
         groups = None
 
+        shared_groups = []
+        shared_groups = request.session.get("groups", [])
+        if len(shared_groups) == 0 and not request.user.is_authenticated():
+            return redirect('login-page')
+
+        groups = list(UserGroup.objects.filter(id__in=shared_groups))
+
         if request.user.is_authenticated():
-            groups = request.user.group_memberships.all()
-        else:
-            groups = request.session.get("groups", [])
-            if len(groups) == 0:
-                return redirect('login-page')
-            groups = UserGroup.objects.filter(id__in=groups)
+            groups.extend(request.user.group_memberships.all())
+            groups.extend(request.user.owned_groups.all())
 
         kwargs["groups"] = groups
         return f(request, *args, **kwargs)
@@ -311,18 +315,18 @@ def output_file(request, dataset, package, path, groups=None):
         _, filename = os.path.split(path)
         if filename.endswith("css"):
             mime = "text/css"
-            if filename.startswith("bootstrap"):
-                f = open(staticfiles_storage.path("exploratory_analysis/css/bootstrap/bootstrap.css"))
-            elif filename.startswith("viewer"):
-                f = open(staticfiles_storage.path("exploratory_analysis/css/viewer.css"))
+            try:
+                f = pkg_resources.resource_stream("output_viewer", os.path.join("static", "css", filename))
+            except Exception as e:
+                print e
+                return HttpResponse(status="404")
         elif filename.endswith('js'):
             mime = "text/javascript"
-            if filename.lower().startswith("jquery"):
-                f = open(staticfiles_storage.path('exploratory_analysis/js/jquery/jquery-1.10.2.min.js'))
-            elif filename.lower().startswith("viewer"):
-                f = open(staticfiles_storage.path('exploratory_analysis/js/viewer.js'))
-            elif filename.lower().startswith("bootstrap"):
-                f = open(staticfiles_storage.path('exploratory_analysis/js/bootstrap/bootstrap.min.js'))
+            try:
+                f = pkg_resources.resource_stream("output_viewer", os.path.join("static", "js", filename))
+            except Exception as e:
+                print e
+                return HttpResponse(status="404")
         return HttpResponse(f, content_type=mime)
 
     if path.startswith("%s-" % package):
@@ -358,4 +362,70 @@ def browse_datasets(request, groups=None):
 
     template = loader.get_template("exploratory_analysis/browse.html")
     rc = RequestContext(request, {"datasets": datasets, "selected": selected})
+    return HttpResponse(template.render(rc))
+
+
+@shared_or_login
+def view_dataset(request, ds, groups=None):
+    if request.user.is_authenticated():
+        datasets = list(request.user.dataset_set.all())
+    else:
+        datasets = []
+    for group in groups:
+        datasets.extend(group.datasets.all())
+
+    for d in datasets:
+        if d.id == int(ds):
+            break
+    else:
+        return HttpResponse("User does not have access to dataset %s" % ds, status="404")
+
+    selector = {
+        "dataset": d
+    }
+
+    if "package" not in request.GET:
+        package = d.packages[0]
+    else:
+        package = request.GET["package"]
+
+    selector["package"] = package
+    selector["packages"] = d.packages
+
+    index = d.package_index(package)
+    spec = index["specification"]
+    selector["pages"] = []
+    selector["groups"] = []
+    selector["rows"] = []
+    selector["cols"] = []
+
+    for page_index, page in enumerate(spec):
+        p = {"index": page_index}
+        p.update(page)
+        selector["pages"].append(p)
+        if int(request.GET.get("page", -1)) == page_index:
+            selector["page"] = p
+            for group_ind, (group_rows, group) in enumerate(zip(page["rows"], page["groups"])):
+                g = {"index": group_ind}
+                g.update(group)
+                selector["groups"].append(g)
+                if int(request.GET.get("group", -1)) == group_ind:
+                    selector["group"] = g
+                    for row_ind, row in enumerate(group_rows):
+                        r = {"index": row_ind}
+                        r.update(row)
+                        selector["rows"].append(r)
+                        if int(request.GET.get("row", -1)) == row_ind:
+                            selector["row"] = r
+                            for col_ind, col in enumerate(row["columns"]):
+                                c = {"index": col_ind}
+                                if isinstance(col, dict):
+                                    c.update(col)
+                                else:
+                                    continue
+                                selector["cols"].append(c)
+                                if int(request.GET.get("col", -1)) == col_ind:
+                                    selector["col"] = c
+    template = loader.get_template("exploratory_analysis/viewer.html")
+    rc = RequestContext(request, selector)
     return HttpResponse(template.render(rc))
