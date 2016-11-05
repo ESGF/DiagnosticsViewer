@@ -17,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from .models import Dataset, UserGroup
 from django.contrib.auth.models import User
-
+from urllib import urlencode
 import json
 import logging
 import traceback
@@ -350,82 +350,107 @@ def browse_datasets(request, groups=None):
         datasets.extend(group.datasets.all())
 
     if "dataset" in request.GET:
-        selected = None
+        requested = [int(i) for i in request.GET["dataset"].split(",")]
+        selected = []
         for ds in datasets:
-            if ds.id == int(request.GET["dataset"]):
-                selected = ds
+            if ds.id in requested:
+                selected.append(ds)
     else:
         if len(datasets) > 0:
-            selected = datasets[0]
+            selected = [datasets[0]]
         else:
-            selected = None
+            selected = []
 
     template = loader.get_template("exploratory_analysis/browse.html")
     rc = RequestContext(request, {"datasets": datasets, "selected": selected})
     return HttpResponse(template.render(rc))
 
 
+def get_selector(request):
+    pkg = request.GET.get("package", None)
+    page = request.GET.get("page", None)
+    group = request.GET.get("group", None)
+    row = request.GET.get("row", None)
+    col = request.GET.get("col", None)
+    return (pkg, page, group, row, col)
+
+
 @shared_or_login
-def view_dataset(request, ds, groups=None):
+def compare_datasets(request, groups=None):
     if request.user.is_authenticated():
-        datasets = list(request.user.dataset_set.all())
+        source_datasets = list(request.user.dataset_set.all())
     else:
-        datasets = []
+        source_datasets = []
     for group in groups:
-        datasets.extend(group.datasets.all())
+        source_datasets.extend(group.datasets.all())
 
-    for d in datasets:
-        if d.id == int(ds):
+    requested_datasets = request.GET.get("datasets", None)
+    if requested_datasets is None:
+        raise ValueError("Please specify at least one dataset.")
+
+    requested_datasets = [int(i) for i in requested_datasets.split(",")]
+    if len(requested_datasets) < 1:
+        raise ValueError("Please specify at least one dataset.")
+    real_datasets = []
+    for rd in requested_datasets:
+        for sd in source_datasets:
+            if rd == sd.id:
+                real_datasets.append(sd)
+                break
+        else:
+            raise ValueError("No dataset matching %d found." % (rd))
+
+    sel = get_selector(request)
+
+    union_index = real_datasets[0].union(real_datasets[1:])
+    index_groups = []
+    ind_iter = union_index
+    parent_iter = None
+    names = "package", "page", "group", "row", "col"
+
+    # Build the navigation
+    for ind, i in enumerate(sel[:-1]):
+        if i is None:
             break
-    else:
-        return HttpResponse("User does not have access to dataset %s" % ds, status="404")
+        s = sel[:ind]
+        n = names[:ind]
+        d = dict(zip(n, s))
+        d["datasets"] = ",".join([str(ds_id) for ds_id in requested_datasets])
+        group_rows = []
+        for r in ind_iter:
+            d[names[ind]] = r
+            group_rows.append({"url": reverse("compare") + "?" + urlencode(d), "title": r})
+        index_groups.append({"title": i, "rows": group_rows})
+        parent_iter = ind_iter
+        ind_iter = ind_iter[i]
 
-    selector = {
-        "dataset": d
+    template = loader.get_template("exploratory_analysis/viewer.html")
+    values = {
+        "index_groups": index_groups,
+        "datasets": real_datasets,
+        "ds_ids": requested_datasets
     }
 
-    if "package" not in request.GET:
-        package = d.packages[0]
+    # Build the content
+    for n, s in zip(names, sel):
+        if s is None:
+            break
+        values[n] = s
     else:
-        package = request.GET["package"]
+        values["cols"] = ind_iter
+        col = []
+        for ds in real_datasets:
+            try:
+                col.append(ds.query_package(*sel)["path"])
+            except ValueError:
+                col.append(None)
+        values["col"] = col
 
-    selector["package"] = package
-    selector["packages"] = d.packages
+    if "cols" not in values:
+        if n != "col":
+            values[n + "s"] = ind_iter.keys()
+        else:
+            values[n + "s"] = ind_iter
 
-    index = d.package_index(package)
-    spec = index["specification"]
-    selector["pages"] = []
-    selector["groups"] = []
-    selector["rows"] = []
-    selector["cols"] = []
-
-    for page_index, page in enumerate(spec):
-        p = {"index": page_index}
-        p.update(page)
-        selector["pages"].append(p)
-        if int(request.GET.get("page", -1)) == page_index:
-            selector["page"] = p
-            for group_ind, (group_rows, group) in enumerate(zip(page["rows"], page["groups"])):
-                g = {"index": group_ind}
-                g.update(group)
-                selector["groups"].append(g)
-                if int(request.GET.get("group", -1)) == group_ind:
-                    selector["group"] = g
-                    for row_ind, row in enumerate(group_rows):
-                        r = {"index": row_ind}
-                        r.update(row)
-                        selector["rows"].append(r)
-                        if int(request.GET.get("row", -1)) == row_ind:
-                            selector["row"] = r
-                            for col_ind, col in enumerate(row["columns"]):
-                                c = {"index": col_ind}
-                                if isinstance(col, dict):
-                                    c.update(col)
-                                else:
-                                    continue
-                                selector["cols"].append(c)
-                                if int(request.GET.get("col", -1)) == col_ind:
-                                    selector["col"] = c
-    template = loader.get_template("exploratory_analysis/viewer.html")
-    rc = RequestContext(request, selector)
+    rc = RequestContext(request, values)
     return HttpResponse(template.render(rc))

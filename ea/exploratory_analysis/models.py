@@ -5,6 +5,8 @@ import os
 import hashlib
 import json
 from output_viewer.page import Page
+import collections
+import package_cache
 
 # Create your models here.
 
@@ -67,10 +69,110 @@ class Dataset(models.Model):
                 indices.append(f[:-11])
         return indices
 
+    def query_package(self, package, page=None, group=None, row=None, col=None):
+        ind = self.package_index(package)
+        pages = []
+        for i, p in enumerate(ind["specification"]):
+            if page is not None:
+                if i == page or p["title"] == page:
+                    break
+            else:
+                pages.append(p["title"])
+        else:
+            if page is None:
+                return pages
+            else:
+                raise ValueError("No page %s in package %s of DataSet %d" % (page, package, self.id))
+
+        groups = []
+        for i, g in enumerate(p["groups"]):
+            if group is not None:
+                if i == group or g["title"] == group:
+                    break
+            else:
+                groups.append(g["title"])
+        else:
+            if group is None:
+                return groups
+            else:
+                raise ValueError("No group %s in page %s of package %s of DataSet %d" % (group, page, package, self.id))
+
+        row_index = i
+        rows = []
+        for i, r in enumerate(p["rows"][row_index]):
+            if row is not None:
+                if i == row or r["title"] == row:
+                    break
+            else:
+                rows.append(r["title"])
+        else:
+            if row is None:
+                return rows
+            else:
+                raise ValueError("No row %s in group %s in page %s of package %s of DataSet %d" % (row, group, page, package, self.id))
+
+        cols = []
+        if col is None and "columns" in g:
+            return g["columns"]
+
+        for i, c in enumerate(r["columns"]):
+            col_name = c["title"] if isinstance(c, dict) else c
+            if col is not None:
+                if i == col or c == col or ("columns" in g and g["columns"][i] == col) or (isinstance(c, dict) and c["title"] == col):
+                    break
+            else:
+                cols.append(col_name)
+        else:
+            if col is None:
+                return cols
+            else:
+                raise ValueError("No col %s in row %s of group %s in page %s of package %s of DataSet %d" % (col, row, group, page, package, self.id))
+
+        return c
+
+    def index(self):
+        """
+        Returns the entire tree of packages down to the keys of the columns.
+        """
+        packages = collections.OrderedDict()
+        for pkg in self.packages:
+            packages[pkg] = collections.OrderedDict()
+            for page in self.query_package(pkg):
+                packages[pkg][page] = collections.OrderedDict()
+                for grp in self.query_package(pkg, page):
+                    packages[pkg][page][grp] = collections.OrderedDict()
+                    for row in self.query_package(pkg, page, grp):
+                        packages[pkg][page][grp][row] = self.query_package(pkg, page, grp, row)
+        return packages
+
+    def union(self, package=None, page=None, group=None, row=None, col=None, *datasets):
+        union_index = self.index()
+        for ds in datasets:
+            new_index = ds.index()
+            for package in new_index:
+                if package not in union_index:
+                    union_index[package] = new_index[package]
+                else:
+                    for page in package:
+                        if page not in union_index[package]:
+                            union_index[package][page] = new_index[package][page]
+                        else:
+                            for grp in page:
+                                if grp not in union_index[package][page]:
+                                    union_index[package][page][grp] = new_index[package][page][grp]
+                                else:
+                                    for row in grp:
+                                        if row not in union_index[package][page][grp]:
+                                            union_index[package][page][grp][row] = new_index[package][page][grp][row]
+                                        else:
+                                            for col in new_index[package][page][grp][row]:
+                                                if col not in union_index[package][page][grp][row]:
+                                                    union_index[package][page][grp][row].append(col)
+        return union_index
+
     def package_index(self, pkg):
         if self.package_exists(pkg):
-            with open(os.path.join(self.path, "%s-index.json" % pkg)) as ind:
-                return json.load(ind)
+            return package_cache.get_index(self, pkg)
         else:
             return None
 

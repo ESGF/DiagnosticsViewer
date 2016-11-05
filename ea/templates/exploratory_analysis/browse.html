@@ -13,74 +13,22 @@
 	<div class="row">
 		<div class="col-sm-4">
 			<h1>Browse Datasets</h1>
+			<select id="dataset_picker" multiple>
+				{% for ds in datasets %}
+					<option value="{{ ds.id }}" {% if ds in selected %}selected{% endif %}>{{ ds.proper_name }}</option>
+						}
+				{% endfor %}
+			</select>
 		</div>
 	</div>
 
 	<div class="row">
-		<div class="col-sm-6">
-			<div class="header">
-				<label for="dataset">Dataset</label>
-				<button type="button" style="padding:0;" class="btn btn-link" id="share" data-toggle="modal" data-target="#shareModal"><i class="glyphicon glyphicon-share"></i> Share</button>
-			</div>
-			<div class="body">
-				<select class="dataset_picker">
-					{% for ds in datasets %}
-						<option data-pkgs="{{ ds.packages|join:'|' }}" value="{{ ds.id }}" {% if ds.id == selected.id %}selected{% endif %}>{{ ds.proper_name }}</option>
-							}
-					{% endfor %}
-				</select>
-			</div>
-			<div class="viewer" data-dsid="{% if selected %}{{selected.id}}{% endif %}"></div>
+		<div id="index">
+		{{ index }}
 		</div>
-		<div class="col-sm-6">
-			<div class="header">
-				<label for="dataset">Dataset</label>
-				<button type="button" style="padding:0;" class="btn btn-link" id="share" data-toggle="modal" data-target="#shareModal"><i class="glyphicon glyphicon-share"></i> Share</button>
-			</div>
-			<div class="body">
-				<select class="dataset_picker">
-					{% for ds in datasets %}
-						<option data-pkgs="{{ ds.packages|join:'|' }}" value="{{ ds.id }}" {% if ds.id == selected.id %}selected{% endif %}>{{ ds.proper_name }}</option>
-							}
-					{% endfor %}
-				</select>
-			</div>
-			<div class="viewer" data-dsid="{% if selected %}{{selected.id}}{% endif %}"></div>
-		</div>
-	</div>
-	<!-- Modal -->
-	<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareLabel">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title" id="shareLabel">Share Dataset With Group</h4>
-				</div>
-				<div class="modal-body">
-					<label for="shareGroup">Group to Share With:</label>
-					<select id="shareGroup">
-						{% if request.user.owned_groups.all %}
-						<optgroup label="Owner">
-						{% for grp in request.user.owned_groups.all %}
-							<option value="{{grp.id}}">{{grp.name}}</option>
-						{% endfor %}
-						</optgroup>
-						{% endif %}
-						{% if request.user.groups.all %}
-						<optgroup label="Member">
-						{% for grp in request.user.groups.all %}
-							<option value="{{grp.id}}">{{grp.name}}</option>
-						{% endfor %}
-						</optgroup>
-						{% endif %}
-					</select>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-					<button type="button" id="share_button" class="btn btn-primary">Share</button>
-				</div>
-			</div>
-		</div>
+		{% for dataset in selected %}
+			{% include 'exploratory_analysis/viewer.html' %}
+		{% endfor %}
 	</div>
 
 <script type="text/javascript">
@@ -144,7 +92,7 @@
 	}
 
 	$("body").ready(function(){
-		$(".dataset_picker").change(function() {
+		$("#dataset_picker").change(function() {
 			var index = this.selectedIndex;
 			var option = $(this.options[index]);
 			var dataset = option.val();

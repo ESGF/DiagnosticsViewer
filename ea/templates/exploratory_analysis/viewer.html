@@ -1,38 +1,31 @@
-<div class="viewer_box">
-	{% if col %}
-	<!-- render the column view -->
-		<h1>{{col.title}}</h1>
-		<img src="{% url 'output-file' dataset.id package col.path %}" />
-	{% else %}{% if row %}
-		<h1>{{row.title}}</h1>
+{% load ea_filters %}
+<div class="col-sm-4">
+	{% include 'exploratory_analysis/viewer_index.html' %}
+	{% if row %}
 		<ul>
 		{% for col in cols %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}{% if group %}
-		<h1>{{group.title}}</h1>
 		<ul>
 		{% for row in rows %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}{% if page %}
-		<h1>{{page.title}}</h1>
 		<ul>
 		{% for group in groups %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}{% if package %}
-		<h1>{{ package }}</h1>
 		<ul>
 		{% for page in pages %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}
-		<h1>{{ dataset.name }}</h1>
 		<ul>
 		{% for package in dataset.packages %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
@@ -42,5 +35,22 @@
 	{% endif %}
 	{% endif %}
 	{% endif %}
-	{% endif %}
+</div>
+<div class="col-sm-8">
+{% for dataset in datasets %}
+	<div data-dsid="{{dataset.id}}" class="viewer_box">
+		<h1>{{dataset.name}}</h1>
+		{% if col %}
+			{% with c=col|get:forloop.counter0 %}
+				{% if c %}
+				<img src="{% url 'output-file' dataset.id package c %}" />
+				{% else %}
+				<p>Image not found</p>
+				{% endif %}
+			{% endwith %}
+		{% else %}
+		<p>Select Image to View</p>
+		{% endif %}
+	</div>
+{% endfor %}
 </div>

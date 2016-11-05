@@ -1,16 +1,13 @@
 {% if col %}
-	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}&group={{group.index}}&row={{row.index}}&col={{col.index}}">{{col.title}}</a>
+	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}&page={{page|urlencode}}&group={{group|urlencode}}&row={{row|urlencode}}&col={{col|urlencode}}">{{col}}</a>
 {% else %}{% if row %}
-	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}&group={{group.index}}&row={{row.index}}">{{row.title}}</a>
+	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}&page={{page|urlencode}}&group={{group|urlencode}}&row={{row|urlencode}}">{{row}}</a>
 {% else %}{% if group %}
-	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}&group={{group.index}}">{{group.title}}</a>
+	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}&page={{page|urlencode}}&group={{group|urlencode}}">{{group}}</a>
 {% else %}{% if page %}
-	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}&page={{page.index}}">{{page.title}}</a>
-{% else %}{% if package %}
-	<a href="{% url 'viewer' dataset.id %}?package={{package|urlencode}}">{{package}}</a>
+	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}&page={{page|urlencode}}">{{page}}</a>
 {% else %}
-	<a href="{% url 'viewer' dataset.id %}">{{dataset.name}}</a>
-{% endif %}
+	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}">{{package}}</a>
 {% endif %}
 {% endif %}
 {% endif %}

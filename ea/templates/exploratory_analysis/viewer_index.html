@@ -1,0 +1,21 @@
+<div class="panel-group" id="viewer_index" role="tablist" aria-multiselectable="true">
+  {% for ind_grp in index_groups %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="heading{{forloop.counter}}">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">{{ind_grp.title}}</a>
+      </h4>
+    </div>
+    <div id="collapse{{forloop.counter}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{forloop.counter}}">
+      <ul class="list-group">
+        {% for ind_row in ind_grp.rows %}
+        <li class='list-group-item'><a href="{{ind_row.url}}">{{ ind_row.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<script>
+  $('.collapse').collapse();
+</script>
