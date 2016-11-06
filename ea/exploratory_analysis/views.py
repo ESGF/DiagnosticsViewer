@@ -372,7 +372,7 @@ def get_selector(request):
     group = request.GET.get("group", None)
     row = request.GET.get("row", None)
     col = request.GET.get("col", None)
-    return (pkg, page, group, row, col)
+    return [pkg, page, group, row, col]
 
 
 @shared_or_login

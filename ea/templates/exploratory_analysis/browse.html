@@ -16,96 +16,53 @@
 			<select id="dataset_picker" multiple>
 				{% for ds in datasets %}
 					<option value="{{ ds.id }}" {% if ds in selected %}selected{% endif %}>{{ ds.proper_name }}</option>
-						}
 				{% endfor %}
 			</select>
 		</div>
 	</div>
 
-	<div class="row">
-		<div id="index">
-		{{ index }}
-		</div>
-		{% for dataset in selected %}
-			{% include 'exploratory_analysis/viewer.html' %}
-		{% endfor %}
+	<div class="row" id="viewer_row">
 	</div>
 
 <script type="text/javascript">
-	function parseQuery(qstr) {
-        var query = {};
-        var a = qstr.split('&');
-        for (var i = 0; i < a.length; i++) {
-            var b = a[i].split('=');
-            query[decodeURIComponent(b[0])] = decodeURIComponent(b[1] || '');
-        }
-        return query;
-    }
-	var package = undefined, page = undefined, group = undefined, row = undefined, col = undefined;
+	var package = null, page = null, group = null, row = null, col = null;
 	function view() {
-		$(".viewer").each(function(){
-			var dataset = $(this).attr('data-dsid');
-			var url = "/viewer/" + dataset;
-			var params = {};
-			if (package !== undefined) {
-				params.package = package;
+		var datasets = $("#dataset_picker").val().join(',');
+		var url_params = {
+			datasets: datasets
+		}
+		var names = ["package", "page", "group", "row", "col"];
+		var values = [package, page, group, row, col];
+		for (var ind = 0; ind < 5; ind++) {
+			if (values[ind] === null) {
+				break;
 			}
-			if (page !== undefined) {
-				params.page = page;
-			}
-			if (group !== undefined) {
-				params.group = group;
-			}
-			if (row !== undefined) {
-				params.row = row;
-			}
-			if (col !== undefined) {
-				params.col = col;
-			}
-			url += "?" + $.param(params);
-			$(this).empty()
-			$(this).load(url, function(){
-				$(this).find(".dropdown-toggle").dropdown();
-				// hijack links to just do the view call
-				$(this).find("a[href]").click(function(e){
-					var url = $(this).attr("href");
-					console.log(url);
-					var qstr = url.split("?")[1];
-					console.log(qstr);
-					var params = parseQuery(qstr);
-					console.log(params);
-					package = params.package;
-					page = params.page;
-					group = params.group;
-					row = params.row;
-					col = params.col;
-					view();
-					e.preventDefault();
-				});
+			url_params[names[ind]] = values[ind];
+		}
+		var q = $.param(url_params);
+		$("#viewer_row").load("{% url 'compare' %}?" + q, function() {
+			$("#viewer_row a[href]").each(function() {
+				if ($(this).attr("href").includes("{% url 'compare' %}?")) {
+					$(this).click(function(e) {
+						var href = $(this).attr("href");
+						var query = href.split("?")[1];
+						var search = new URLSearchParams(query);
+						package = search.get("package");
+						page = search.get("page");
+						group = search.get("group");
+						row = search.get("row");
+						col = search.get("col");
+						e.preventDefault();
+						view();
+					});
+				}
 			});
-			$
 		});
-	}
-
-	function index_link(target) {
-		$("#detail").attr("src", target);
 	}
 
 	$("body").ready(function(){
 		$("#dataset_picker").change(function() {
-			var index = this.selectedIndex;
-			var option = $(this.options[index]);
-			var dataset = option.val();
-			$(this).parent().parent().find(".viewer").attr("data-dsid", dataset);
 			view();
-		});
-
-		$("#share_button").click(function(){
-			var ds = $("#dataset").val();
-			var group = $("#shareGroup").val();
-			$.post("{% url 'share-dataset' %}", {"group": group, "dataset": ds[0]}, function(d){
-				$("#shareModal").modal('hide');
-			});
 		});
 		view();
 	});

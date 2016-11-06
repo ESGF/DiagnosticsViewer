@@ -3,7 +3,7 @@
   <div class="panel panel-default">
     <div class="panel-heading" role="tab" id="heading{{forloop.counter}}">
       <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">{{ind_grp.title}}</a>
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapseOne">{{ind_grp.title}}</a>
       </h4>
     </div>
     <div id="collapse{{forloop.counter}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{forloop.counter}}">
@@ -16,6 +16,7 @@
   </div>
   {% endfor %}
 </div>
+
 <script>
   $('.collapse').collapse();
 </script>

@@ -1,5 +1,5 @@
 {% load ea_filters %}
-<div class="col-sm-4">
+<div class="col-sm-2">
 	{% include 'exploratory_analysis/viewer_index.html' %}
 	{% if row %}
 		<ul>
@@ -27,7 +27,7 @@
 		</ul>
 	{% else %}
 		<ul>
-		{% for package in dataset.packages %}
+		{% for package in packages %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
@@ -36,21 +36,23 @@
 	{% endif %}
 	{% endif %}
 </div>
-<div class="col-sm-8">
-{% for dataset in datasets %}
-	<div data-dsid="{{dataset.id}}" class="viewer_box">
-		<h1>{{dataset.name}}</h1>
-		{% if col %}
-			{% with c=col|get:forloop.counter0 %}
-				{% if c %}
-				<img src="{% url 'output-file' dataset.id package c %}" />
-				{% else %}
-				<p>Image not found</p>
-				{% endif %}
-			{% endwith %}
-		{% else %}
-		<p>Select Image to View</p>
-		{% endif %}
+<div class="col-sm-10">
+	<div class="viewer">
+	{% for dataset in datasets %}
+		<div data-dsid="{{dataset.id}}" class="viewer_box">
+			<h1>{{dataset.name}}</h1>
+			{% if col %}
+				{% with c=col|get:forloop.counter0 %}
+					{% if c %}
+					<img src="{% url 'output-file' dataset.id package c %}" />
+					{% else %}
+					<p>Image not found</p>
+					{% endif %}
+				{% endwith %}
+			{% else %}
+			<p>Select Image to View</p>
+			{% endif %}
+		</div>
+	{% endfor %}
 	</div>
-{% endfor %}
 </div>
