@@ -6,7 +6,7 @@
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapseOne">{{ind_grp.title}}</a>
       </h4>
     </div>
-    <div id="collapse{{forloop.counter}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{forloop.counter}}">
+    <div id="collapse{{forloop.counter}}" class="panel-collapse collapse collapsed" role="tabpanel" aria-labelledby="heading{{forloop.counter}}">
       <ul class="list-group">
         {% for ind_row in ind_grp.rows %}
         <li class='list-group-item'><a href="{{ind_row.url}}">{{ ind_row.title }}</a></li>
@@ -18,5 +18,5 @@
 </div>
 
 <script>
-  $('.collapse').collapse();
+  $('.collapse').collapse({"toggle": false});
 </script>

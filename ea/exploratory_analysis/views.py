@@ -437,7 +437,6 @@ def compare_datasets(request, groups=None):
             break
         values[n] = s
     else:
-        values["cols"] = ind_iter
         col = []
         for ds in real_datasets:
             try:
@@ -446,11 +445,30 @@ def compare_datasets(request, groups=None):
                 col.append(None)
         values["col"] = col
 
-    if "cols" not in values:
-        if n != "col":
-            values[n + "s"] = ind_iter.keys()
-        else:
-            values[n + "s"] = ind_iter
+    for ind in range(len(sel)):
+        if sel[ind] is None:
+            break
+
+    url_params = dict(zip(names[:ind], sel[:ind]))
+    url_params["datasets"] = ",".join([str(ds_id) for ds_id in requested_datasets])
+    rows = []
+    for title in ind_iter:
+        url_params[n] = title
+        url = reverse("compare") + "?" + urlencode(url_params)
+        v = {"url": url, "title": title}
+        if n == "col":
+            for r in real_datasets:
+                c_sel = sel[:-1] + [title]
+                try:
+                    o = r.query_package(*c_sel)
+                    if isinstance(o, dict):
+                        break
+                except:
+                    pass
+            else:
+                del v["url"]
+        rows.append(v)
+    values[n + "s"] = rows
 
     rc = RequestContext(request, values)
     return HttpResponse(template.render(rc))

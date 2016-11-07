@@ -1,14 +1,1 @@
-{% if col %}
-	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}&page={{page|urlencode}}&group={{group|urlencode}}&row={{row|urlencode}}&col={{col|urlencode}}">{{col}}</a>
-{% else %}{% if row %}
-	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}&page={{page|urlencode}}&group={{group|urlencode}}&row={{row|urlencode}}">{{row}}</a>
-{% else %}{% if group %}
-	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}&page={{page|urlencode}}&group={{group|urlencode}}">{{group}}</a>
-{% else %}{% if page %}
-	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}&page={{page|urlencode}}">{{page}}</a>
-{% else %}
-	<a href="{% url 'compare' %}?datasets={{ds_ids|join:","}}&package={{package|urlencode}}">{{package}}</a>
-{% endif %}
-{% endif %}
-{% endif %}
-{% endif %}
+{% if item.url %}<a href="{{ item.url }}">{% endif %}{{ item.title }}{% if item.url %}</a>{% endif %}

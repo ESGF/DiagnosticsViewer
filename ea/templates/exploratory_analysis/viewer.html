@@ -3,31 +3,31 @@
 	{% include 'exploratory_analysis/viewer_index.html' %}
 	{% if row %}
 		<ul>
-		{% for col in cols %}
+		{% for item in cols %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}{% if group %}
 		<ul>
-		{% for row in rows %}
+		{% for item in rows %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}{% if page %}
 		<ul>
-		{% for group in groups %}
+		{% for item in groups %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}{% if package %}
 		<ul>
-		{% for page in pages %}
+		{% for item in pages %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}
 		<ul>
-		{% for package in packages %}
+		{% for item in packages %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>

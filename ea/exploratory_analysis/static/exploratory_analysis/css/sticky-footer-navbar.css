@@ -50,19 +50,3 @@ canvas {
   padding-right: 15px;
 }
 
-.viewer {
-  display: flex;
-  flex-direction: row;
-  max-width:100%;
-}
-.viewer_box {
-  flex-shrink: 1;
-}
-
-.viewer_box > *{
-  width:100%;
-}
-
-.viewer_box img {
-  display: block;
-}
