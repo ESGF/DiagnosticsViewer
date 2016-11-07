@@ -306,10 +306,8 @@ def output_file(request, dataset, package, path, groups=None):
         if found is False:
             return HttpResponse("User does not have access to dataset %s" % dataset, status="404")
 
-    package_index = os.path.join(dataset.path, "%s-index.json" % package)
-    if not os.path.exists(package_index):
-        return HttpResponse("No package %s found." % package, status="404")
-
+    package_index = dataset.package_index(package)
+    path = path.lower()
     if path.startswith("viewer"):
         # Map to our scripts/css files
         _, filename = os.path.split(path)
@@ -329,15 +327,14 @@ def output_file(request, dataset, package, path, groups=None):
                 return HttpResponse(status="404")
         return HttpResponse(f, content_type=mime)
 
-    if path.startswith("%s-" % package):
-        file_path = os.path.join(dataset.path, path)
-    else:
-        file_path = os.path.join(dataset.path, "%s-%s" % (package, path))
+    file_path = dataset.file_path(package, path)
 
     if not os.path.exists(file_path):
         return HttpResponse("No file %s found in package." % file_path, status="404")
 
-    return HttpResponse(open(file_path))
+    r = HttpResponse(open(file_path))
+    r["Content-Disposition"] = 'attachment; filename="%s-%s"' % (slugify(dataset.name), path)
+    return r
 
 
 @shared_or_login
@@ -440,7 +437,7 @@ def compare_datasets(request, groups=None):
         col = []
         for ds in real_datasets:
             try:
-                col.append(ds.query_package(*sel)["path"])
+                col.append(ds.query_package(*sel))
             except ValueError:
                 col.append(None)
         values["col"] = col
@@ -460,12 +457,14 @@ def compare_datasets(request, groups=None):
             for r in real_datasets:
                 c_sel = sel[:-1] + [title]
                 try:
+                    # Check if it's a "file" or just a textual output column
                     o = r.query_package(*c_sel)
                     if isinstance(o, dict):
                         break
                 except:
                     pass
             else:
+                # If it's just text, we don't want a link here.
                 del v["url"]
         rows.append(v)
     values[n + "s"] = rows

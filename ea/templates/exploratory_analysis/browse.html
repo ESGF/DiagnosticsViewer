@@ -13,7 +13,7 @@
 	<div class="row">
 		<div class="col-sm-4">
 			<h1>Browse Datasets</h1>
-			<select id="dataset_picker" multiple>
+			<select id="dataset_picker" class="form-control" multiple>
 				{% for ds in datasets %}
 					<option value="{{ ds.id }}" {% if ds in selected %}selected{% endif %}>{{ ds.proper_name }}</option>
 				{% endfor %}

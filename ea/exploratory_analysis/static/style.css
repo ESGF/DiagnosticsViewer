@@ -5,6 +5,11 @@
 }
 .viewer_box {
   flex-shrink: 1;
+  flex-grow: 1;
+}
+
+.viewer_box > h1 {
+	text-align:center;
 }
 
 .viewer_box > *{

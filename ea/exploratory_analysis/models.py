@@ -116,9 +116,9 @@ class Dataset(models.Model):
             return g["columns"]
 
         for i, c in enumerate(r["columns"]):
-            col_name = c["title"] if isinstance(c, dict) else c
+            col_name = c["title"] if isinstance(c, dict) else g.get("columns", c)
             if col is not None:
-                if i == col or c == col or ("columns" in g and g["columns"][i] == col) or (isinstance(c, dict) and c["title"] == col):
+                if i == col or col_name == col:
                     break
             else:
                 cols.append(col_name)
@@ -128,6 +128,17 @@ class Dataset(models.Model):
             else:
                 raise ValueError("No col %s in row %s of group %s in page %s of package %s of DataSet %d" % (col, row, group, page, package, self.id))
 
+        if isinstance(c, dict):
+            if "files" in c:
+                to_del = []
+                l = list(c["files"])
+                for i, f in enumerate(c["files"]):
+                    path = self.file_path(package, f["url"])
+                    if not os.path.exists(path):
+                        to_del.append(i)
+                for ind in to_del:
+                    del l[ind]
+                c["files"] = l
         return c
 
     def index(self):
@@ -178,6 +189,18 @@ class Dataset(models.Model):
 
     def package_exists(self, pkg):
         return pkg in self.packages
+
+    def file_path(self, pkg, path):
+        path, ext = os.path.splitext(path)
+        path = slugify(path)
+        path = path + ext
+
+        if path.startswith("%s-" % pkg):
+            file_path = os.path.join(self.path, path)
+        else:
+            file_path = os.path.join(self.path, "%s-%s" % (pkg, path))
+
+        return file_path
 
     def is_package_built(self, pkg):
         index = self.package_index(pkg)
