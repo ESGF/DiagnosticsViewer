@@ -14,13 +14,14 @@
 </style>
 
 	<div class="row">
-		<div class="col-sm-4">
+		<div class="col-sm-12">
 			<h1>Browse Datasets</h1>
 			<select id="dataset_picker" class="form-control" multiple>
 				{% for ds in datasets %}
 					<option value="{{ ds.id }}" {% if ds in selected %}selected{% endif %}>{{ ds.proper_name }}</option>
 				{% endfor %}
 			</select>
+			<small>Select datasets to view; use shift + click or command (macOS) / control (windows/linux) + click to view multiple datasets.</small>
 		</div>
 	</div>
 

@@ -1,31 +1,37 @@
 {% load ea_filters %}
 <div class="col-sm-2 index">
+	<h3>Dataset Index</h3>
 	{% include 'exploratory_analysis/viewer_index.html' %}
 	{% if row %}
+		<h4>Columns</h4>
 		<ul>
 		{% for item in cols %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}{% if group %}
+		<h4>Rows</h4>
 		<ul>
 		{% for item in rows %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}{% if page %}
+		<h4>Groups</h4>
 		<ul>
 		{% for item in groups %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}{% if package %}
+		<h4>Pages</h4>
 		<ul>
 		{% for item in pages %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
 		{% endfor %}
 		</ul>
 	{% else %}
+		<h4>Packages</h4>
 		<ul>
 		{% for item in packages %}
 			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
@@ -37,8 +43,9 @@
 	{% endif %}
 </div>
 <div class="col-sm-10">
-	<div class="viewer">
+	<h3>Viewer</h3>
 	{% if col %}
+	<div class="viewer">
 		{% for dataset in datasets %}
 			{% with c=col|get:forloop.counter0 %}
 			<div data-dsid="{{dataset.id}}" class="viewer_box">
@@ -85,10 +92,10 @@
 			</div>
 			{% endwith %}
 		{% endfor %}
-		{% else %}
-			<p>Select Image to View</p>
-		{% endif %}
 	</div>
+	{% else %}
+		<p>Choose images to view from index</p>
+	{% endif %}
 </div>
 <script type='text/javascript'>
 $("select[id^=file_]").change(function(){
