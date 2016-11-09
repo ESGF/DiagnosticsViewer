@@ -31,6 +31,7 @@ $.ajaxSetup({
     }
 });
 
+/*
 $(document).ajaxError(function(e, jqXHR) {
     console.log(jqXHR.responseJSON);
     var container = $("body > #wrap > .container");
@@ -39,3 +40,4 @@ $(document).ajaxError(function(e, jqXHR) {
     container.prepend(error_div);
     error_div.fadeIn();
 });
+*/

@@ -1,0 +1,105 @@
+{% load ea_filters %}
+<div class="col-sm-2 index">
+	<h3>Dataset Index</h3>
+	{% include 'exploratory_analysis/viewer_index.html' %}
+	{% if row %}
+		<h4>Columns</h4>
+		<ul>
+		{% for item in cols %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% else %}{% if group %}
+		<h4>Rows</h4>
+		<ul>
+		{% for item in rows %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% else %}{% if page %}
+		<h4>Groups</h4>
+		<ul>
+		{% for item in groups %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% else %}{% if package %}
+		<h4>Pages</h4>
+		<ul>
+		{% for item in pages %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<h4>Packages</h4>
+		<ul>
+		{% for item in packages %}
+			<li>{% include "exploratory_analysis/viewer_link.html" %}</li>
+		{% endfor %}
+		</ul>
+	{% endif %}
+	{% endif %}
+	{% endif %}
+	{% endif %}
+</div>
+<div class="col-sm-10">
+	<h3>Viewer</h3>
+	{% if col %}
+	<div class="viewer">
+		{% for dataset in datasets %}
+			{% with c=col|get:forloop.counter0 %}
+			<div data-dsid="{{dataset.id}}" class="viewer_box">
+				<h1 class="viewer_box_title">{{dataset.name}}</h1>
+				{% if c %}
+				<img class="viewer_box_content" src="{% url 'output-file' dataset.id package c.path %}" />
+				<div class="viewer_box_footer">
+					<div class="form-inline">
+						<div class="form-group">
+							<select id="file_{{ dataset.id }}" class="form-control">
+								<option value="{% url 'output-file' dataset.id package c.path %}">File Shown</option>
+								{% for f in c.files %}
+								<option value="{% url 'output-file' dataset.id package f.url %}">
+								{% if f.title %}
+									{{ f.title }}
+								{% else %}
+									{% for char in c.path %}
+										{% if char == "." %}
+											{% with s=forloop.counter0|add:1|stringformat:"i:" %}
+												{{ f.url|slice:s|upper }} File
+											{% endwith %}
+										{% endif %}
+									{% endfor %}
+								{% endif %}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+						<a id="download_{{dataset.id}}" href="{% url 'output-file' dataset.id package c.path %}" class="btn btn-primary" download>Download</a>
+					</div>
+					{% if c.meta %}
+					<h4>Metadata</h4>
+					<dl>
+					{% for k, v in c.meta.items %}
+						<dt>{{k}}</dt>
+						<dd>{{v}}</dd>
+					{% endfor %}
+					</dl>
+					{% endif %}
+				</div>
+				{% else %}
+				<p>Image not found</p>
+				{% endif %}
+			</div>
+			{% endwith %}
+		{% endfor %}
+	</div>
+	{% else %}
+		<p>Choose images to view from index</p>
+	{% endif %}
+</div>
+<script type='text/javascript'>
+$("select[id^=file_]").change(function(){
+	var $this = $(this);
+	$this.parent().next().attr('href', $this.val());
+});
+</script>

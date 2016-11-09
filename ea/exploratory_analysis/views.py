@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import View
 from django.core.urlresolvers import reverse
+import pkg_resources
 from django.template import RequestContext, loader
 import json
 from django.contrib.auth import authenticate, login
@@ -16,7 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from .models import Dataset, UserGroup
 from django.contrib.auth.models import User
-
+from urllib import urlencode
 import json
 import logging
 import traceback
@@ -47,13 +48,16 @@ def shared_or_login(f):
     def wrap(request, *args, **kwargs):
         groups = None
 
+        shared_groups = []
+        shared_groups = request.session.get("groups", [])
+        if len(shared_groups) == 0 and not request.user.is_authenticated():
+            return redirect('login-page')
+
+        groups = list(UserGroup.objects.filter(id__in=shared_groups))
+
         if request.user.is_authenticated():
-            groups = request.user.group_memberships.all()
-        else:
-            groups = request.session.get("groups", [])
-            if len(groups) == 0:
-                return redirect('login-page')
-            groups = UserGroup.objects.filter(id__in=groups)
+            groups.extend(request.user.group_memberships.all())
+            groups.extend(request.user.owned_groups.all())
 
         kwargs["groups"] = groups
         return f(request, *args, **kwargs)
@@ -302,38 +306,35 @@ def output_file(request, dataset, package, path, groups=None):
         if found is False:
             return HttpResponse("User does not have access to dataset %s" % dataset, status="404")
 
-    package_index = os.path.join(dataset.path, "%s-index.json" % package)
-    if not os.path.exists(package_index):
-        return HttpResponse("No package %s found." % package, status="404")
-
+    package_index = dataset.package_index(package)
+    path = path.lower()
     if path.startswith("viewer"):
         # Map to our scripts/css files
         _, filename = os.path.split(path)
         if filename.endswith("css"):
             mime = "text/css"
-            if filename.startswith("bootstrap"):
-                f = open(staticfiles_storage.path("exploratory_analysis/css/bootstrap/bootstrap.css"))
-            elif filename.startswith("viewer"):
-                f = open(staticfiles_storage.path("exploratory_analysis/css/viewer.css"))
+            try:
+                f = pkg_resources.resource_stream("output_viewer", os.path.join("static", "css", filename))
+            except Exception as e:
+                print e
+                return HttpResponse(status="404")
         elif filename.endswith('js'):
             mime = "text/javascript"
-            if filename.lower().startswith("jquery"):
-                f = open(staticfiles_storage.path('exploratory_analysis/js/jquery/jquery-1.10.2.min.js'))
-            elif filename.lower().startswith("viewer"):
-                f = open(staticfiles_storage.path('exploratory_analysis/js/viewer.js'))
-            elif filename.lower().startswith("bootstrap"):
-                f = open(staticfiles_storage.path('exploratory_analysis/js/bootstrap/bootstrap.min.js'))
+            try:
+                f = pkg_resources.resource_stream("output_viewer", os.path.join("static", "js", filename))
+            except Exception as e:
+                print e
+                return HttpResponse(status="404")
         return HttpResponse(f, content_type=mime)
 
-    if path.startswith("%s-" % package):
-        file_path = os.path.join(dataset.path, path)
-    else:
-        file_path = os.path.join(dataset.path, "%s-%s" % (package, path))
+    file_path = dataset.file_path(package, path)
 
     if not os.path.exists(file_path):
         return HttpResponse("No file %s found in package." % file_path, status="404")
 
-    return HttpResponse(open(file_path))
+    r = HttpResponse(open(file_path))
+    r["Content-Disposition"] = 'attachment; filename="%s-%s"' % (slugify(dataset.name), path)
+    return r
 
 
 @shared_or_login
@@ -346,16 +347,127 @@ def browse_datasets(request, groups=None):
         datasets.extend(group.datasets.all())
 
     if "dataset" in request.GET:
-        selected = None
+        requested = [int(i) for i in request.GET["dataset"].split(",")]
+        selected = []
         for ds in datasets:
-            if ds.id == int(request.GET["dataset"]):
-                selected = ds
+            if ds.id in requested:
+                selected.append(ds)
     else:
         if len(datasets) > 0:
-            selected = datasets[0]
+            selected = [datasets[0]]
         else:
-            selected = None
+            selected = []
 
     template = loader.get_template("exploratory_analysis/browse.html")
     rc = RequestContext(request, {"datasets": datasets, "selected": selected})
+    return HttpResponse(template.render(rc))
+
+
+def get_selector(request):
+    pkg = request.GET.get("package", None)
+    page = request.GET.get("page", None)
+    group = request.GET.get("group", None)
+    row = request.GET.get("row", None)
+    col = request.GET.get("col", None)
+    return [pkg, page, group, row, col]
+
+
+@shared_or_login
+def compare_datasets(request, groups=None):
+    if request.user.is_authenticated():
+        source_datasets = list(request.user.dataset_set.all())
+    else:
+        source_datasets = []
+    for group in groups:
+        source_datasets.extend(group.datasets.all())
+
+    requested_datasets = request.GET.get("datasets", None)
+    if requested_datasets is None:
+        raise ValueError("Please specify at least one dataset.")
+
+    requested_datasets = [int(i) for i in requested_datasets.split(",")]
+    if len(requested_datasets) < 1:
+        raise ValueError("Please specify at least one dataset.")
+    real_datasets = []
+    for rd in requested_datasets:
+        for sd in source_datasets:
+            if rd == sd.id:
+                real_datasets.append(sd)
+                break
+        else:
+            raise ValueError("No dataset matching %d found." % (rd))
+
+    sel = get_selector(request)
+
+    union_index = real_datasets[0].union(real_datasets[1:])
+    index_groups = []
+    ind_iter = union_index
+    parent_iter = None
+    names = "package", "page", "group", "row", "col"
+
+    # Build the navigation
+    for ind, i in enumerate(sel[:-1]):
+        if i is None:
+            break
+        s = sel[:ind]
+        n = names[:ind]
+        d = dict(zip(n, s))
+        d["datasets"] = ",".join([str(ds_id) for ds_id in requested_datasets])
+        group_rows = []
+        for r in ind_iter:
+            d[names[ind]] = r
+            group_rows.append({"url": reverse("compare") + "?" + urlencode(d), "title": r})
+        index_groups.append({"title": i, "rows": group_rows})
+        parent_iter = ind_iter
+        ind_iter = ind_iter[i]
+
+    template = loader.get_template("exploratory_analysis/viewer.html")
+    values = {
+        "index_groups": index_groups,
+        "datasets": real_datasets,
+        "ds_ids": requested_datasets
+    }
+
+    # Build the content
+    for n, s in zip(names, sel):
+        if s is None:
+            break
+        values[n] = s
+    else:
+        col = []
+        for ds in real_datasets:
+            try:
+                col.append(ds.query_package(*sel))
+            except ValueError:
+                col.append(None)
+        values["col"] = col
+
+    for ind in range(len(sel)):
+        if sel[ind] is None:
+            break
+
+    url_params = dict(zip(names[:ind], sel[:ind]))
+    url_params["datasets"] = ",".join([str(ds_id) for ds_id in requested_datasets])
+    rows = []
+    for title in ind_iter:
+        url_params[n] = title
+        url = reverse("compare") + "?" + urlencode(url_params)
+        v = {"url": url, "title": title}
+        if n == "col":
+            for r in real_datasets:
+                c_sel = sel[:-1] + [title]
+                try:
+                    # Check if it's a "file" or just a textual output column
+                    o = r.query_package(*c_sel)
+                    if isinstance(o, dict):
+                        break
+                except:
+                    pass
+            else:
+                # If it's just text, we don't want a link here.
+                del v["url"]
+        rows.append(v)
+    values[n + "s"] = rows
+
+    rc = RequestContext(request, values)
     return HttpResponse(template.render(rc))

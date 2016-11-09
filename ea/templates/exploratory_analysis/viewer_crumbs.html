@@ -1,0 +1,52 @@
+<ol class="breadcrumb">
+	{% if package %}
+	<li>
+		<a href="{% url 'viewer' dataset.id %}?package={{ package| urlencode }}" class="dropdown-toggle" data-toggle="dropdown">{{ package }}</a>
+		<ul class="dropdown-menu">
+			{% for pkg in packages %}
+			<li><a href="{% url 'viewer' dataset.id %}?package={{ pkg| urlencode }}">{{ pkg }}</a></li>
+			{% endfor %}
+		</ul>
+	</li>
+	{% if page %}
+	<li>
+		<a href="{% url 'viewer' dataset.id %}?package={{ package| urlencode }}&page={{ page.index|urlencode }}" class="dropdown-toggle" data-toggle="dropdown">{{ page.title }}</a>
+		<ul class="dropdown-menu">
+		{% for p in pages %}
+			<li><a href="{% url 'viewer' dataset.id %}?package={{ package| urlencode }}&page={{ p.index|urlencode }}">{{ p.title }}</a></li>
+		{% endfor %}
+		</ul>
+	</li>
+	{% if group %}
+	<li>
+		<a href="{% url 'viewer' dataset.id %}?package={{ package| urlencode }}&page={{ page.index|urlencode }}&group={{ group.index|urlencode }}" class="dropdown-toggle" data-toggle="dropdown">{{ group.title }}</a>
+		<ul class="dropdown-menu">
+		{% for grp in groups %}
+			<li><a href="{% url 'viewer' dataset.id %}?package={{ package| urlencode }}&page={{ page.index|urlencode }}&group={{ grp.index|urlencode }}">{{ grp.title }}</a></li>
+		{% endfor %}
+		</ul>
+	</li>
+	{% if row %}
+	<li>
+		<a href="{% url 'viewer' dataset.id %}?package={{ package| urlencode }}&page={{ page.index|urlencode }}&group={{ group.index|urlencode }}&row={{ row.index|urlencode }}" class="dropdown-toggle" data-toggle="dropdown">{{ row.title }}</a>
+		<ul class="dropdown-menu">
+		{% for r in rows %}
+			<li><a href="{% url 'viewer' dataset.id %}?package={{ package| urlencode }}&page={{ page.index|urlencode }}&group={{ group.index|urlencode }}&row={{ r.index|urlencode }}">{{ r.title }}</a></li>
+		{% endfor %}
+		</ul>
+	</li>
+	{% if col %}
+	<li>
+		<a href="{% url 'viewer' dataset.id %}?package={{ package| urlencode }}&page={{ page.index|urlencode }}&group={{ group.index|urlencode }}&row={{ row.index|urlencode }}&col={{ col.index|urlencode }}" class="dropdown-toggle" data-toggle="dropdown">{{ col.title }}</a>
+		<ul class="dropdown-menu">
+		{% for c in cols %}
+			<li><a href="{% url 'viewer' dataset.id %}?package={{ package| urlencode }}&page={{ page.index|urlencode }}&group={{ group.index|urlencode }}&row={{ row.index|urlencode }}&col={{ c.index|urlencode }}">{{ c.title }}</a></li>
+		{% endfor %}
+		</ul>
+	</li>
+	{% endif %}
+	{% endif %}
+	{% endif %}
+	{% endif %}
+	{% endif %}
+</ol>

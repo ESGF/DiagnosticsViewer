@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
+from exploratory_analysis.package_cache import clear_cache
 from django.template import RequestContext, loader
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_exempt
@@ -286,6 +287,7 @@ def retrieve_key(request, username):
 
 @csrf_exempt
 def upload_files(request, dataset_name):
+    clear_cache()
     user = auth_and_validate(request)
     if user is False:
         return HttpResponse("Invalid credentials.", status="403")
