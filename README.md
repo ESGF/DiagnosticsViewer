@@ -16,3 +16,6 @@ The [output_viewer](https://github.com/ESGF/output_viewer) project provides a co
 3. Create the database: `python manage.py migrate`
 3. Create a superuser: `python manage.py createsuperuser`
 3. Run the server in the stack of your choice.
+
+
+This project was created in a collaboration of Lawrence Livermore National Laboratory and Oakridge National Laboratory
